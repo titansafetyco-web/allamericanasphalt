@@ -25,6 +25,11 @@ export default async function SitemapPage() {
                 {t.nav.Home}
               </Link>
             </li>
+            <li>
+              <Link className="text-navy hover:underline" href="/estimate">
+                {t.freeEstimate}
+              </Link>
+            </li>
             {nav.map((item) => (
               <li key={item.href}>
                 <Link className="text-navy hover:underline" href={item.href}>

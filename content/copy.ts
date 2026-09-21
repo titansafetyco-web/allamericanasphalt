@@ -1,7 +1,7 @@
 export const pageCopy = {
   home: {
     heroKicker: "West Palm Beach • Fort Lauderdale • Stuart",
-    heroTitle: "South Florida paving, from start to finish.",
+    heroTitle: "South Florida paving,\nFrom start to finish.",
     heroBody:
       "George Stevens, the owner of All American Asphalt, is a commercial asphalt and paving contractor in West Palm Beach, FL with over 30 years of experience. We service municipalities, school districts, parking lots, shopping centers, churches, homeowner associations, private roads, and residential driveways. We also do asphalt, speed bumps, and seal coating/striping. We offer same-day service in West Palm Beach, Fort Lauderdale, Plantation, and Davie, FL, and no job is too big or too small for us. Rest assured knowing that we are licensed, bonded, and insured. Your satisfaction is guaranteed!",
     midTitle: "Commercial and Residential Asphalt Services",

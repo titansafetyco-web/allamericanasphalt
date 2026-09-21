@@ -11,7 +11,7 @@ type Stringify<T> = T extends string
 export const pageCopyEs: Stringify<typeof pageCopy> = {
   home: {
     heroKicker: "West Palm Beach • Fort Lauderdale • Stuart",
-    heroTitle: "Pavimentación en el sur de la Florida, de principio a fin.",
+    heroTitle: "Pavimentación en el sur de la Florida,\nDe principio a fin.",
     heroBody:
       "George Stevens, dueño de All American Asphalt, es un contratista comercial de asfalto y pavimentación en West Palm Beach, FL, con más de 30 años de experiencia. Atendemos municipios, distritos escolares, estacionamientos, centros comerciales, iglesias, asociaciones de propietarios, caminos privados y entradas residenciales. También hacemos asfalto, reductores de velocidad y sellado/rayado. Ofrecemos servicio el mismo día en West Palm Beach, Fort Lauderdale, Plantation y Davie, FL, y ningún trabajo es demasiado grande o pequeño. Estamos licenciados, afianzados y asegurados. ¡Su satisfacción está garantizada!",
     midTitle: "Servicios de asfalto comercial y residencial",

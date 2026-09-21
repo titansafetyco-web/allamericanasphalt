@@ -31,7 +31,16 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
   return (
     <html lang={locale} className={`${heading.variable} ${sans.variable} antialiased`} suppressHydrationWarning>
-      <body className="flex min-h-dvh flex-col bg-background font-sans text-foreground">{children}</body>
+      <body className="flex min-h-dvh flex-col bg-background font-sans text-foreground">
+        {process.env.NODE_ENV === "development" ? (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){function s(n){if(n&&n.removeAttribute){n.removeAttribute("data-cursor-ref");n.removeAttribute("data-cursor-element-id")}}function w(r){s(r);if(r&&r.querySelectorAll){r.querySelectorAll("[data-cursor-ref],[data-cursor-element-id]").forEach(s)}}w(document.documentElement);new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var m=ms[i];if(m.type==="attributes")s(m.target);else for(var j=0;j<m.addedNodes.length;j++)w(m.addedNodes[j])}}).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:["data-cursor-ref","data-cursor-element-id"]})})();`,
+            }}
+          />
+        ) : null}
+        {children}
+      </body>
     </html>
   );
 }

@@ -22,17 +22,26 @@ export function ReviewGrid({ limit }: { limit?: number }) {
 }
 
 export function TrustBadges() {
-  const badges = [
-    { src: "/badges/top3.webp", alt: "Top 3 West Palm Beach Asphalt Contractor 2026" },
-    { src: "/badges/angie.jpg", alt: "Angie Award 2025" },
-    { src: "/badges/chamber.png", alt: "Chamber of Commerce" },
-    { src: "/badges/sba.png", alt: "SBA" },
-    { src: "/badges/wbe.png", alt: "WBE" },
+  const badges: { src: string; alt: string; width: number; height: number; unoptimized?: boolean }[] = [
+    { src: "/badges/top3.webp", alt: "Top 3 West Palm Beach Asphalt Contractor 2026", width: 280, height: 140 },
+    { src: "/badges/angie.jpg", alt: "Angie Award 2025", width: 280, height: 140 },
+    { src: "/badges/chamber.webp", alt: "Chamber of Commerce", width: 450, height: 45, unoptimized: true },
+    { src: "/badges/sba.png", alt: "SBA", width: 280, height: 140 },
+    { src: "/badges/wbe.png", alt: "WBE", width: 280, height: 140 },
   ];
   return (
     <div className="flex flex-wrap items-center justify-center gap-6">
       {badges.map((b) => (
-        <Image key={b.src} src={b.src} alt={b.alt} width={140} height={70} className="h-12 w-auto object-contain" />
+        <Image
+          key={b.src}
+          src={b.src}
+          alt={b.alt}
+          width={b.width}
+          height={b.height}
+          quality={100}
+          unoptimized={b.unoptimized}
+          className={b.unoptimized ? "h-[45px] w-auto max-w-full object-contain" : "h-12 w-auto object-contain"}
+        />
       ))}
     </div>
   );

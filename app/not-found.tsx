@@ -13,7 +13,7 @@ export default function NotFound() {
         <Link href="/" className="rounded-md bg-navy px-4 py-2 font-semibold text-white">
           Home
         </Link>
-        <Link href="/contact-us" className="rounded-md bg-red-flag px-4 py-2 font-semibold text-white">
+        <Link href="/estimate" className="rounded-md bg-red-flag px-4 py-2 font-semibold text-white">
           Free Estimate
         </Link>
       </div>

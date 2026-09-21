@@ -1,13 +1,20 @@
 import Image from "next/image";
-import { CheckCircle2, Clock, Shield, Truck } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Shield, Truck } from "lucide-react";
 import { EstimateForm } from "@/components/site/EstimateForm";
 import { GalleryGrid } from "@/components/site/GalleryGrid";
 import { CtaBand } from "@/components/site/PageHero";
+import { SiteLogo } from "@/components/site/SiteLogo";
 import { ReviewGrid, TrustBadges } from "@/components/site/Reviews";
 import { cities } from "@/content/areas";
 import { company } from "@/content/company";
 import { getHomeServices, getPageCopy, getTrustPoints, getUi } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
+
+const heroCityHrefs = [
+  "/asphalt-paving-company-west-palm-beach-fl",
+  "/fort-lauderdale-fl",
+  "/asphalt-paving-company-stuart-fl",
+] as const;
 
 export default async function HomePage() {
   const locale = await getLocale();
@@ -18,30 +25,47 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-navy-deep text-white">
+      <section className="relative isolate min-h-[44rem] overflow-hidden bg-[#071018] text-white md:min-h-[52rem]">
         <Image
-          src="/images/hero.jpg"
-          alt="Paving contractor in West Palm Beach, FL"
+          src="/images/hero.webp"
+          alt="Asphalt roller and paving crew on a newly paved road at sunset"
           fill
           priority
-          className="object-cover opacity-35"
+          quality={100}
+          unoptimized
+          className="object-cover object-[28%_38%] brightness-[1.28] contrast-[1.12] saturate-[1.2]"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy/40" />
-        <div className="relative mx-auto grid max-w-7xl grid-cols-[1.15fr_0.85fr] gap-10 px-4 py-20 max-md:grid-cols-1 max-md:py-12">
-          <div className="flex flex-col justify-center">
-            <div className="mb-5 flex flex-wrap gap-2">
-              {copy.home.heroKicker.split(" • ").map((city) => (
-                <span
-                  key={city}
-                  className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white"
-                >
-                  {city}
-                </span>
-              ))}
-            </div>
-            <h1 className="font-heading text-4xl leading-[1.05] text-white md:text-6xl">{copy.home.heroTitle}</h1>
-            <p className="mt-6 max-w-xl border-l-4 border-red-flag pl-5 text-base leading-relaxed text-white/90 md:text-lg">
+        <div className="absolute inset-0 bg-navy/42" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/70 via-navy/30 to-navy/20" />
+        <div className="relative mx-auto grid min-h-[44rem] max-w-7xl grid-cols-[1.15fr_0.85fr] items-stretch gap-10 px-4 pb-10 pt-5 max-md:min-h-0 max-md:grid-cols-1 max-md:py-8 md:min-h-[52rem] md:pb-14 md:pt-6">
+          <div className="flex flex-col max-md:order-2">
+            <nav
+              aria-label={t.serviceAreas}
+              className="mt-10 inline-flex max-w-full items-center gap-1 self-start rounded-full border border-white/30 bg-white/15 p-1 shadow-[0_8px_28px_rgba(0,0,0,0.28)] backdrop-blur-xl"
+            >
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-flag text-white">
+                <MapPin className="size-3.5" strokeWidth={2.4} aria-hidden />
+              </span>
+              <div className="flex min-w-0 flex-wrap items-center">
+                {copy.home.heroKicker.split(" • ").map((city, i) => (
+                  <span key={city} className="inline-flex items-center">
+                    {i > 0 ? (
+                      <span className="mx-0.5 size-1 rounded-full bg-red-flag" aria-hidden />
+                    ) : null}
+                    <a
+                      href={heroCityHrefs[i]}
+                      className="rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-white/20 md:text-xs"
+                    >
+                      {city}
+                    </a>
+                  </span>
+                ))}
+              </div>
+            </nav>
+            <div className="mt-16">
+            <h1 className="whitespace-pre-line font-heading text-5xl leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.55)] md:text-7xl">{copy.home.heroTitle}</h1>
+            <p className="mt-6 max-w-xl border-l-4 border-red-flag pl-5 text-base leading-relaxed text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.5)] md:text-lg">
               {copy.home.heroBody}
             </p>
             <ul className="mt-7 flex flex-wrap gap-x-8 gap-y-3 text-sm font-semibold text-white">
@@ -58,23 +82,41 @@ export default async function HomePage() {
                 {t.home.sameDay}
               </li>
             </ul>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {company.licenses.map((l) => (
-                <span
-                  key={l.county}
-                  className="rounded-md border border-white/20 bg-navy-deep/50 px-3 py-1.5 text-xs font-semibold tracking-wide text-white"
-                >
-                  {l.county} {l.number}
-                </span>
-              ))}
+            <div
+              aria-label={t.home.licensed}
+              className="mt-6 inline-flex max-w-full items-center gap-1 self-start rounded-full border border-white/30 bg-white/15 p-1 shadow-[0_8px_28px_rgba(0,0,0,0.28)] backdrop-blur-xl"
+            >
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-flag text-white">
+                <Shield className="size-3.5" strokeWidth={2.4} aria-hidden />
+              </span>
+              <div className="flex min-w-0 flex-wrap items-center">
+                {company.licenses.map((l, i) => (
+                  <span key={l.county} className="inline-flex items-center">
+                    {i > 0 ? (
+                      <span className="mx-0.5 size-1 rounded-full bg-red-flag" aria-hidden />
+                    ) : null}
+                    <span className="rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white md:text-xs">
+                      {l.county} {l.number}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
             </div>
           </div>
-          <div className="rounded-2xl bg-white p-3.5 text-foreground shadow-2xl md:p-6">
-            <h2 className="font-heading text-xl text-navy md:text-2xl">{t.home.getEstimate}</h2>
-            <p className="mb-2 hidden text-sm text-muted-foreground md:mb-4 md:block">
-              {t.home.estimateHint}
-            </p>
-            <EstimateForm compact locale={locale} />
+          <div className="flex min-h-[36rem] flex-col items-center justify-between max-md:order-1 max-md:min-h-0 max-md:gap-10 md:min-h-[46rem]">
+            <SiteLogo
+              priority
+              className="mx-auto"
+              imageClassName="h-36 drop-shadow-[0_6px_18px_rgba(0,0,0,0.55)] md:h-40"
+            />
+            <div className="w-full rounded-2xl border border-white/40 bg-white/45 p-3.5 text-foreground shadow-2xl backdrop-blur-xl md:p-6">
+              <h2 className="font-heading text-xl text-red-flag md:text-2xl">{t.home.getEstimate}</h2>
+              <p className="mb-2 hidden text-sm text-black md:mb-4 md:block">
+                {t.home.estimateHint}
+              </p>
+              <EstimateForm compact locale={locale} />
+            </div>
           </div>
         </div>
       </section>

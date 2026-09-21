@@ -13,6 +13,7 @@ export const primaryNav = [
   { href: "/service-areas", label: "Areas" },
   { href: "/reviews", label: "Reviews" },
   { href: "/blog", label: "Blog" },
+  { href: "/contact-us", label: "Contact" },
 ] as const;
 
 export const footerNav = [

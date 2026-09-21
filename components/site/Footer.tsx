@@ -16,7 +16,11 @@ export async function Footer() {
         </div>
 
         <div>
-          <h2 className="mb-3 font-heading text-lg tracking-wide">{t.contact}</h2>
+          <h2 className="mb-3 font-heading text-lg tracking-wide">
+            <a href="/contact-us" className="hover:text-red-flag">
+              {t.contact}
+            </a>
+          </h2>
           <p className="text-sm text-white/80">{addressLine}</p>
           <p className="mt-2 text-sm">
             <a className="hover:text-red-flag" href={company.phones.westPalmBeach.href}>

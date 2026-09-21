@@ -86,7 +86,7 @@ export function MobileMenu({
           )}
         </div>
         <a
-          href="/contact-us"
+          href="/estimate"
           onClick={() => setOpen(false)}
           className="mt-2 rounded-md bg-red-flag px-3 py-3 text-center font-bold"
         >

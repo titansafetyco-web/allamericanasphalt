@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ChevronDown, Phone, Shield } from "lucide-react";
 import { company } from "@/content/company";
 import { LanguageToggle } from "@/components/site/LanguageToggle";
@@ -21,9 +20,9 @@ export async function Header({ memberName, locale }: { memberName?: string | nul
   const nav = getPrimaryNav(locale);
 
   return (
-    <header className="sticky top-0 z-50 w-full shrink-0 self-start border-b border-white/10 bg-navy-light text-white shadow-lg">
-      <div className="border-b border-white/15 bg-navy-deep max-md:hidden">
-        <div className="flex w-full flex-nowrap items-center justify-between gap-3 px-4 py-2">
+    <header className="sticky top-0 z-50 w-full shrink-0 self-start border-b border-white/10 bg-[linear-gradient(180deg,#163f86_0%,#0d2d64_100%)] text-white shadow-[0_10px_28px_rgba(7,28,69,0.28)]">
+      <div className="border-b border-white/10 bg-navy-deep max-md:hidden">
+        <div className="flex w-full flex-nowrap items-center justify-center gap-8 px-4 py-2">
           <div className="inline-flex min-w-0 items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5">
             <Shield className="size-4 shrink-0 text-red-flag" aria-hidden />
             <p className="truncate whitespace-nowrap text-sm font-semibold text-white">{t.licensedBar}</p>
@@ -54,7 +53,6 @@ export async function Header({ memberName, locale }: { memberName?: string | nul
               </a>
             ))}
             <div className="ml-2 flex shrink-0 flex-nowrap items-center gap-1.5 border-l border-white/20 pl-4">
-              <LanguageToggle locale={locale} />
               {signedIn ? (
                 <>
                   <a
@@ -93,29 +91,17 @@ export async function Header({ memberName, locale }: { memberName?: string | nul
         </div>
       </div>
 
-      <div className="mx-auto flex w-full max-w-7xl min-w-0 items-center justify-between gap-4 px-4 py-3">
-        <a href="/" className="shrink-0">
-          <Image
-            src="/logo.png"
-            alt="All American Asphalt, LLC — From Start to Finish"
-            width={2000}
-            height={760}
-            className="h-32 w-auto"
-            quality={100}
-            unoptimized
-            priority
-          />
-        </a>
-
-        <nav className="flex items-center gap-0.5 max-md:hidden">
+      <div className="flex items-center justify-center gap-3 px-3 py-2.5 max-md:px-4 max-md:py-3">
+        <div className="flex w-fit max-w-full min-w-0 items-center justify-between gap-4 rounded-2xl border border-white/15 bg-white/10 px-3 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur-xl max-md:ml-auto">
+        <nav className="flex min-w-0 items-center gap-0.5 max-md:hidden">
           {nav.map((item) =>
             "children" in item && item.children ? (
               <div key={item.label} className="group relative">
                 <a
                   href={item.href}
                   className={cn(
-                    "relative inline-flex items-center gap-1 px-5 py-3 text-lg font-semibold tracking-wide text-white/90 transition-colors duration-200 hover:text-white",
-                    "after:absolute after:bottom-1 after:left-5 after:right-5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-white after:transition-transform after:duration-200 hover:after:scale-x-100",
+                    "relative inline-flex items-center gap-1 px-3 py-3 text-lg font-semibold tracking-wide text-white/90 transition-colors duration-200 hover:text-white xl:px-5",
+                    "after:absolute after:bottom-1 after:left-3 after:right-3 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-white after:transition-transform after:duration-200 hover:after:scale-x-100 xl:after:left-5 xl:after:right-5",
                     item.children.some((c) => isActive(pathname, c.href)) && "text-white after:scale-x-100 after:bg-red-flag",
                   )}
                 >
@@ -139,8 +125,8 @@ export async function Header({ memberName, locale }: { memberName?: string | nul
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative px-5 py-3 text-lg font-semibold tracking-wide text-white/90 transition-colors duration-200 hover:text-white",
-                  "after:absolute after:bottom-1 after:left-5 after:right-5 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-white after:transition-transform after:duration-200 hover:after:scale-x-100",
+                  "relative px-3 py-3 text-lg font-semibold tracking-wide text-white/90 transition-colors duration-200 hover:text-white xl:px-5",
+                  "after:absolute after:bottom-1 after:left-3 after:right-3 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-white after:transition-transform after:duration-200 hover:after:scale-x-100 xl:after:left-5 xl:after:right-5",
                   isActive(pathname, item.href) && "text-white after:scale-x-100 after:bg-red-flag",
                 )}
               >
@@ -150,23 +136,24 @@ export async function Header({ memberName, locale }: { memberName?: string | nul
           )}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <LanguageToggle locale={locale} className="md:hidden" />
+        <div className="flex shrink-0 flex-nowrap items-center gap-2">
           <a
             href={company.phones.westPalmBeach.href}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-red-flag px-4 text-sm font-medium text-white hover:bg-red-flag/90 max-md:hidden"
+            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-red-flag px-3 text-sm font-medium text-white hover:bg-red-flag/90 max-md:hidden xl:px-4"
           >
             <Phone className="size-4" />
             {company.phones.westPalmBeach.display}
           </a>
           <a
-            href="/contact-us"
-            className="inline-flex h-10 items-center justify-center rounded-lg bg-white px-4 text-sm font-medium text-navy hover:bg-white/90 max-md:hidden"
+            href="/estimate"
+            className="inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-lg bg-white px-3 text-sm font-medium text-navy hover:bg-white/90 max-md:hidden xl:px-4"
           >
             {t.freeEstimate}
           </a>
           <MobileMenu memberName={memberName} locale={locale} />
         </div>
+        </div>
+        <LanguageToggle locale={locale} className="max-md:hidden" />
       </div>
       <div id="mobile-menu-slot" />
     </header>
