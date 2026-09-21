@@ -16,7 +16,7 @@ export function EstimateForm({
   compact = false,
   className,
 }: {
-  type?: "estimate" | "feedback";
+  type?: "estimate" | "contact" | "feedback";
   compact?: boolean;
   className?: string;
 }) {
@@ -76,18 +76,32 @@ export function EstimateForm({
       ) : null}
 
       <div className="grid gap-1 md:gap-1.5">
-        <label htmlFor={`${type}-message`} className="text-xs font-medium md:text-sm">{type === "feedback" ? "How did we do?" : "Project details"}</label>
+        <label htmlFor={`${type}-message`} className="text-xs font-medium md:text-sm">
+          {type === "feedback" ? "How did we do?" : type === "contact" ? "Your message" : "Project details"}
+        </label>
         <Textarea
           id={`${type}-message`}
           name="message"
           rows={compact ? 2 : 5}
-          placeholder={type === "feedback" ? "Compliment, complaint, or concern" : "Tell us about the driveway, lot, or road"}
+          placeholder={
+            type === "feedback"
+              ? "Compliment, complaint, or concern"
+              : type === "contact"
+                ? "How can we help?"
+                : "Tell us about the driveway, lot, or road"
+          }
           className="bg-white max-md:min-h-16 md:min-h-24"
         />
       </div>
 
       <Button type="submit" disabled={pending} className="h-10 bg-red-flag text-sm font-bold text-white hover:bg-red-flag/90 md:h-12 md:text-base">
-        {pending ? "Sending…" : type === "feedback" ? "Send feedback" : "Request free estimate"}
+        {pending
+          ? "Sending…"
+          : type === "feedback"
+            ? "Send feedback"
+            : type === "contact"
+              ? "Send message"
+              : "Request free estimate"}
       </Button>
       {state.message ? (
         <p className={cn("text-sm", state.ok ? "text-emerald-700" : "text-destructive")} role="status">

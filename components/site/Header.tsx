@@ -8,6 +8,7 @@ import { ChevronDown, Menu, Phone, Shield, X } from "lucide-react";
 import { company } from "@/content/company";
 import { primaryNav } from "@/content/nav";
 import { Button } from "@/components/ui/button";
+import { signOut } from "@/app/auth-actions";
 import { cn } from "@/lib/utils";
 
 function isActive(pathname: string, href: string) {
@@ -15,9 +16,10 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Header() {
+export function Header({ memberName }: { memberName?: string | null }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const signedIn = Boolean(memberName);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-navy-light text-white shadow-lg">
@@ -59,18 +61,39 @@ export function Header() {
               </a>
             ))}
             <div className="ml-2 flex items-center gap-1.5 border-l border-white/20 pl-4">
-              <Link
-                href="/sign-in"
-                className="rounded-md px-3 py-2 text-sm font-semibold text-white/85 transition-colors hover:bg-white hover:text-navy"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                className="rounded-md bg-red-flag px-3.5 py-2 text-sm font-bold text-white transition-colors hover:bg-red-flag/90"
-              >
-                Sign Up
-              </Link>
+              {signedIn ? (
+                <>
+                  <Link
+                    href="/account"
+                    className="max-w-40 truncate rounded-md px-3 py-2 text-sm font-semibold text-white/85 transition-colors hover:bg-white hover:text-navy"
+                  >
+                    {memberName}
+                  </Link>
+                  <form action={signOut}>
+                    <button
+                      type="submit"
+                      className="rounded-md bg-red-flag px-3.5 py-2 text-sm font-bold text-white transition-colors hover:bg-red-flag/90"
+                    >
+                      Sign Out
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/sign-in"
+                    className="rounded-md px-3 py-2 text-sm font-semibold text-white/85 transition-colors hover:bg-white hover:text-navy"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className="rounded-md bg-red-flag px-3.5 py-2 text-sm font-bold text-white transition-colors hover:bg-red-flag/90"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -182,20 +205,39 @@ export function Header() {
               </div>
             ))}
             <div className="mt-3 grid grid-cols-2 gap-2">
-              <Link
-                href="/sign-in"
-                onClick={() => setOpen(false)}
-                className="rounded-md border border-white/25 px-3 py-3 text-center font-semibold"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/sign-up"
-                onClick={() => setOpen(false)}
-                className="rounded-md bg-white px-3 py-3 text-center font-bold text-navy"
-              >
-                Sign Up
-              </Link>
+              {signedIn ? (
+                <>
+                  <Link
+                    href="/account"
+                    onClick={() => setOpen(false)}
+                    className="rounded-md border border-white/25 px-3 py-3 text-center font-semibold"
+                  >
+                    Account
+                  </Link>
+                  <form action={signOut}>
+                    <button type="submit" className="w-full rounded-md bg-white px-3 py-3 text-center font-bold text-navy">
+                      Sign Out
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/sign-in"
+                    onClick={() => setOpen(false)}
+                    className="rounded-md border border-white/25 px-3 py-3 text-center font-semibold"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    onClick={() => setOpen(false)}
+                    className="rounded-md bg-white px-3 py-3 text-center font-bold text-navy"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
             <Link
               href="/contact-us"

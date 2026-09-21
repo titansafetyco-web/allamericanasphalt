@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Oswald, Source_Sans_3 } from "next/font/google";
-import { Header } from "@/components/site/Header";
-import { Footer } from "@/components/site/Footer";
 import { company } from "@/content/company";
 import "./globals.css";
 
@@ -31,11 +29,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${heading.variable} ${sans.variable} antialiased`} suppressHydrationWarning>
-      <body className="flex min-h-dvh flex-col bg-background font-sans text-foreground">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+      <body className="flex min-h-dvh flex-col bg-background font-sans text-foreground">{children}</body>
     </html>
   );
 }

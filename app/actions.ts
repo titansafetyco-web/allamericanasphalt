@@ -1,5 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { saveCrmMessage } from "@/lib/crm/messages";
+
 export type FormState = {
   ok: boolean;
   message: string;
@@ -30,6 +33,23 @@ export async function submitLead(
     return { ok: false, message: "Please add your name and phone number so we can reach you." };
   }
 
+  const kind =
+    payload.type === "contact" ? "contact" : payload.type === "feedback" ? "feedback" : "estimate";
+  try {
+    await saveCrmMessage({
+      kind,
+      name: payload.name,
+      phone: payload.phone,
+      email: payload.email,
+      service: payload.service,
+      city: payload.city,
+      body: payload.message,
+    });
+    revalidatePath("/crm/messages");
+  } catch (error) {
+    console.error("CRM message save failed", error);
+  }
+
   const text = [
     `Type: ${payload.type}`,
     `Name: ${payload.name}`,
@@ -53,7 +73,13 @@ export async function submitLead(
         body: JSON.stringify({
           from: "All American Asphalt Website <leads@allamericanasphaltpaving.com>",
           to: [RECIPIENT],
-          subject: `${payload.type === "feedback" ? "Website feedback" : "Free estimate request"} from ${payload.name}`,
+          subject: `${
+            kind === "contact"
+              ? "Website contact"
+              : kind === "feedback"
+                ? "Website feedback"
+                : "Free estimate request"
+          } from ${payload.name}`,
           text,
         }),
       });
@@ -70,66 +96,10 @@ export async function submitLead(
   return {
     ok: true,
     message:
-      payload.type === "feedback"
+      kind === "feedback"
         ? "Thank you. We take every comment seriously and will follow up if we need more detail."
-        : "Thanks — we received your request. Call (561) 684-9183 if you need us sooner.",
-  };
-}
-
-export async function submitAuth(
-  _prev: FormState,
-  formData: FormData,
-): Promise<FormState> {
-  const honeypot = String(formData.get("company") ?? "").trim();
-  if (honeypot) {
-    return { ok: true, message: "Thanks — we received your request." };
-  }
-
-  const mode = String(formData.get("mode") ?? "signin") === "signup" ? "signup" : "signin";
-  const name = String(formData.get("name") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
-  const phone = String(formData.get("phone") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-
-  if (!email || !email.includes("@")) {
-    return { ok: false, message: "Please enter a valid email address." };
-  }
-  if (password.length < 8) {
-    return { ok: false, message: "Password must be at least 8 characters." };
-  }
-  if (mode === "signup" && !name) {
-    return { ok: false, message: "Please add your name so we can set up the account." };
-  }
-
-  const apiKey = process.env.RESEND_API_KEY;
-  if (apiKey && mode === "signup") {
-    const text = [`Type: account request`, `Name: ${name}`, `Email: ${email}`, `Phone: ${phone || "n/a"}`].join("\n");
-    try {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "All American Asphalt Website <leads@allamericanasphaltpaving.com>",
-          to: [RECIPIENT],
-          subject: `Account request from ${name}`,
-          text,
-        }),
-      });
-    } catch (error) {
-      console.error("Account email failed", error);
-    }
-  } else {
-    console.info("Auth submission", { mode, email, name: name || undefined });
-  }
-
-  return {
-    ok: true,
-    message:
-      mode === "signup"
-        ? "Thanks — we received your registration. We’ll follow up the same business day."
-        : "If an account exists for that email, we’ll send a confirmation shortly.",
+        : kind === "contact"
+          ? "Thanks — we received your message. Call (561) 684-9183 if you need us sooner."
+          : "Thanks — we received your request. Call (561) 684-9183 if you need us sooner.",
   };
 }

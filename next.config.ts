@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "allamericanasphaltpaving.com",
       },
+      {
+        protocol: "https",
+        hostname: "gzcpjwutrzcpiykhwgpy.supabase.co",
+      },
     ],
   },
   async redirects() {

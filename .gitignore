@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local CRM inbox (website form submissions)
+/data/crm-messages.json
+
 # local editor and scrape originals
 .cursor/
 _source-assets/

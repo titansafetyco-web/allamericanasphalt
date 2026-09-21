@@ -41,8 +41,8 @@ export default function ContactPage() {
           </ul>
         </div>
         <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
-          <h2 className="mb-4 font-heading text-2xl text-navy">Request a free estimate</h2>
-          <EstimateForm />
+          <h2 className="mb-4 font-heading text-2xl text-navy">Send a message</h2>
+          <EstimateForm type="contact" />
         </div>
       </section>
     </>
