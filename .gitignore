@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local editor and scrape originals
+.cursor/
+_source-assets/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
