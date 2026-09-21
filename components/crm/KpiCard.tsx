@@ -27,30 +27,30 @@ export function KpiCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="bg-white py-4">
-      <div className="flex items-start justify-between gap-3 px-4">
+    <Card className="min-w-0 overflow-hidden bg-white py-3 md:py-4">
+      <div className="flex items-start justify-between gap-2 px-2.5 md:gap-3 md:px-4">
         <div className="min-w-0">
-          <div className="flex items-center gap-2.5">
-            <span className={cn("flex size-9 items-center justify-center rounded-lg", iconClass)}>
-              <Icon className="size-4" aria-hidden />
+          <div className="flex items-center gap-1.5 md:gap-2.5">
+            <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md md:size-9 md:rounded-lg", iconClass)}>
+              <Icon className="size-3.5 md:size-4" aria-hidden />
             </span>
-            <p className="text-sm font-medium text-muted-foreground">{label}</p>
+            <p className="truncate text-[11px] font-medium text-muted-foreground md:text-sm">{label}</p>
           </div>
-          <p className="mt-3 font-heading text-3xl font-medium text-navy">{value}</p>
+          <p className="mt-2 font-heading text-xl font-medium leading-tight text-navy md:mt-3 md:text-3xl">{value}</p>
         </div>
         <div className="shrink-0">{children}</div>
       </div>
       {legend ? (
-        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 px-4">
+        <div className="mt-2 flex flex-wrap gap-x-2 gap-y-0.5 px-2.5 md:mt-3 md:gap-x-3 md:gap-y-1 md:px-4">
           {legend.map((item) => (
-            <p key={item.label} className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <span className="size-2 rounded-full" style={{ backgroundColor: item.color }} />
+            <p key={item.label} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground md:gap-1.5 md:text-[11px]">
+              <span className="size-1.5 shrink-0 rounded-full md:size-2" style={{ backgroundColor: item.color }} />
               {item.label} {item.display ?? item.value}
             </p>
           ))}
         </div>
       ) : null}
-      <p className="mt-2 px-4 text-xs text-muted-foreground">{hint}</p>
+      <p className="mt-1.5 truncate px-2.5 text-[10px] text-muted-foreground md:mt-2 md:px-4 md:text-xs">{hint}</p>
     </Card>
   );
 }
@@ -70,7 +70,7 @@ export function DonutChart({
   let offset = 0;
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" aria-hidden>
+    <svg viewBox={`0 0 ${size} ${size}`} className="size-12 -rotate-90 md:size-[76px]" aria-hidden>
       <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#e8ecf2" strokeWidth={stroke} />
       {segments.map((item) => {
         const length = (item.value / total) * circumference;
@@ -98,7 +98,7 @@ export function ColumnChart({ segments }: { segments: ChartSegment[] }) {
   const max = Math.max(...segments.map((item) => item.value), 1);
 
   return (
-    <div className="flex h-[76px] w-[88px] items-end gap-1.5" aria-hidden>
+    <div className="flex h-12 w-14 items-end gap-1 md:h-[76px] md:w-[88px] md:gap-1.5" aria-hidden>
       {segments.map((item) => (
         <div key={item.label} className="flex h-full flex-1 flex-col justify-end">
           <div
@@ -118,7 +118,7 @@ export function ValueBars({ segments }: { segments: ChartSegment[] }) {
   const max = Math.max(...segments.map((item) => item.value), 1);
 
   return (
-    <div className="flex h-[76px] w-[112px] flex-col justify-center gap-2" aria-hidden>
+    <div className="flex h-12 w-16 flex-col justify-center gap-1 md:h-[76px] md:w-[112px] md:gap-2" aria-hidden>
       {segments.map((item) => (
         <div key={item.label} className="h-2 overflow-hidden rounded-full bg-[#e8ecf2]">
           <div

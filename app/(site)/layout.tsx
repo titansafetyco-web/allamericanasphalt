@@ -1,5 +1,6 @@
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { SupportWidget } from "@/components/site/SupportWidget";
 import { getLocale } from "@/lib/i18n/server";
 import { getAuthUser } from "@/lib/supabase/server";
 
@@ -16,6 +17,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Header memberName={displayName} locale={locale} />
       <main className="flex-1">{children}</main>
       <Footer />
+      <SupportWidget locale={locale} />
     </>
   );
 }

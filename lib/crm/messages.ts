@@ -3,7 +3,13 @@ import path from "node:path";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
-export type MessageKind = "estimate" | "contact" | "feedback";
+export type MessageKind = "estimate" | "contact" | "feedback" | "support";
+
+const messageKinds = new Set<MessageKind>(["estimate", "contact", "feedback", "support"]);
+
+function parseKind(value: unknown): MessageKind {
+  return messageKinds.has(value as MessageKind) ? (value as MessageKind) : "estimate";
+}
 
 export type CrmMessage = {
   id: string;
@@ -74,6 +80,19 @@ const seed: CrmMessage[] = [
     body: "Please call about office hours and whether you work on Saturday for a small driveway patch.",
     read: true,
   },
+  {
+    id: "seed-support-1",
+    createdAt: "2026-09-21T17:22:00.000Z",
+    source: "website",
+    kind: "support",
+    name: "Marcus Hale",
+    phone: "(561) 555-0190",
+    email: "marcus.hale@email.com",
+    service: "Live agent",
+    city: "Boca Raton, FL",
+    body: "Customer: How soon can you seal coat an HOA parking lot in Boca?\n\nAssistant: We typically respond the same business day and can schedule after we see the lot. Share a few details or request a live agent if you’d like someone to call you.\n---\nLive agent requested\nPlease call this afternoon about the HOA lot.",
+    read: false,
+  },
 ];
 
 function sortMessages(messages: CrmMessage[]) {
@@ -108,7 +127,7 @@ function fromRow(row: Record<string, unknown>): CrmMessage {
     id: String(row.id),
     createdAt: String(row.created_at ?? row.createdAt ?? new Date().toISOString()),
     source: "website",
-    kind: row.kind === "contact" || row.kind === "feedback" ? row.kind : "estimate",
+    kind: parseKind(row.kind),
     name: String(row.name ?? ""),
     phone: String(row.phone ?? ""),
     email: String(row.email ?? ""),
@@ -137,6 +156,61 @@ export async function listCrmMessages() {
   return mergeMessages(fromDb ?? [], fromFile, seed);
 }
 
+function toRow(message: CrmMessage) {
+  return {
+    id: message.id,
+    created_at: message.createdAt,
+    source: message.source,
+    kind: message.kind,
+    name: message.name,
+    phone: message.phone,
+    email: message.email,
+    service: message.service,
+    city: message.city,
+    body: message.body,
+    read: message.read,
+  };
+}
+
+async function persistMessage(message: CrmMessage, mode: "insert" | "upsert") {
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient();
+      if (mode === "upsert") {
+        const { data, error } = await supabase
+          .from("crm_messages")
+          .update({
+            kind: message.kind,
+            name: message.name,
+            phone: message.phone,
+            email: message.email,
+            service: message.service,
+            city: message.city,
+            body: message.body,
+            read: message.read,
+          })
+          .eq("id", message.id)
+          .select("id");
+        if (error) console.error("crm_messages update", error.message);
+        if (!error && data?.length) {
+          const current = await readFileMessages();
+          await writeFileMessages(mergeMessages(current, [message]));
+          return message;
+        }
+      }
+
+      const { error } = await supabase.from("crm_messages").insert(toRow(message));
+      if (error) console.error("crm_messages insert", error.message);
+    } catch (error) {
+      console.error("crm_messages persist failed", error);
+    }
+  }
+
+  const current = await readFileMessages();
+  await writeFileMessages(mergeMessages(current, [message]));
+  return message;
+}
+
 export async function saveCrmMessage(input: Omit<CrmMessage, "id" | "createdAt" | "read" | "source"> & { id?: string }) {
   const message: CrmMessage = {
     id: input.id ?? crypto.randomUUID(),
@@ -151,32 +225,26 @@ export async function saveCrmMessage(input: Omit<CrmMessage, "id" | "createdAt" 
     body: input.body,
     read: false,
   };
+  return persistMessage(message, "insert");
+}
 
-  if (isSupabaseConfigured()) {
-    try {
-      const supabase = await createClient();
-      const { error } = await supabase.from("crm_messages").insert({
-        id: message.id,
-        created_at: message.createdAt,
-        source: message.source,
-        kind: message.kind,
-        name: message.name,
-        phone: message.phone,
-        email: message.email,
-        service: message.service,
-        city: message.city,
-        body: message.body,
-        read: false,
-      });
-      if (error) console.error("crm_messages insert", error.message);
-    } catch (error) {
-      console.error("crm_messages insert failed", error);
-    }
-  }
-
+export async function upsertCrmMessage(input: Omit<CrmMessage, "createdAt" | "read" | "source"> & { createdAt?: string }) {
   const current = await readFileMessages();
-  await writeFileMessages(mergeMessages(current, [message]));
-  return message;
+  const existing = current.find((message) => message.id === input.id);
+  const message: CrmMessage = {
+    id: input.id,
+    createdAt: existing?.createdAt ?? input.createdAt ?? new Date().toISOString(),
+    source: "website",
+    kind: input.kind,
+    name: input.name,
+    phone: input.phone,
+    email: input.email,
+    service: input.service,
+    city: input.city,
+    body: input.body,
+    read: false,
+  };
+  return persistMessage(message, "upsert");
 }
 
 export async function markCrmMessageRead(id: string) {

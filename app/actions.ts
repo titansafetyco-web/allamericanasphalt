@@ -31,6 +31,8 @@ export async function submitLead(
     city: String(formData.get("city") ?? "").trim(),
     message: String(formData.get("message") ?? "").trim(),
   };
+  const ratingValue = Number(String(formData.get("rating") ?? "").trim());
+  const rating = Number.isInteger(ratingValue) && ratingValue >= 1 && ratingValue <= 5 ? ratingValue : 0;
 
   if (!payload.name || !payload.phone) {
     return { ok: false, message: form.missing };
@@ -38,6 +40,10 @@ export async function submitLead(
 
   const kind =
     payload.type === "contact" ? "contact" : payload.type === "feedback" ? "feedback" : "estimate";
+  if (kind === "feedback" && !rating) {
+    return { ok: false, message: form.missingRating };
+  }
+  const body = kind === "feedback" && rating ? `Rating: ${rating}/5\n\n${payload.message}` : payload.message;
   try {
     await saveCrmMessage({
       kind,
@@ -46,7 +52,7 @@ export async function submitLead(
       email: payload.email,
       service: payload.service,
       city: payload.city,
-      body: payload.message,
+      body,
     });
     revalidatePath("/crm/messages");
   } catch (error) {
@@ -60,6 +66,7 @@ export async function submitLead(
     `Email: ${payload.email || "n/a"}`,
     `Service: ${payload.service || "n/a"}`,
     `City: ${payload.city || "n/a"}`,
+    ...(rating ? [`Rating: ${rating}/5`] : []),
     "",
     payload.message,
   ].join("\n");

@@ -6,6 +6,7 @@ import { extraServiceCities } from "@/content/areas";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { StarRating } from "@/components/site/StarRating";
 import { getServiceOptions, getUi } from "@/lib/i18n/messages";
 import type { Locale } from "@/lib/i18n/locale";
 import { cn } from "@/lib/utils";
@@ -48,6 +49,15 @@ export function EstimateForm({
           <label htmlFor={`${type}-email`} suppressHydrationWarning className="text-xs font-bold text-black md:text-sm">{t.form.email}</label>
         <Input id={`${type}-email`} name="email" type="email" placeholder="you@email.com" className="h-9 bg-white md:h-11" suppressHydrationWarning />
       </div>
+
+      {type === "feedback" ? (
+        <StarRating
+          key={state.message}
+          name="rating"
+          label={t.form.rating}
+          starLabel={(value) => t.form.starLabel.replace("{n}", String(value))}
+        />
+      ) : null}
 
       {type === "estimate" ? (
         <div className="grid grid-cols-2 gap-2 md:gap-3">

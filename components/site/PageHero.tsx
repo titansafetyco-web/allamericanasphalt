@@ -1,5 +1,5 @@
+import type { ReactNode } from "react";
 import { company } from "@/content/company";
-import { SiteLogo } from "@/components/site/SiteLogo";
 import { getUi } from "@/lib/i18n/messages";
 import { getLocale } from "@/lib/i18n/server";
 
@@ -7,30 +7,43 @@ export async function PageHero({
   kicker,
   title,
   body,
+  aside,
 }: {
   kicker?: string;
   title: string;
   body?: string;
+  aside?: ReactNode;
 }) {
   const t = getUi(await getLocale());
+  const copy = (
+    <>
+      {kicker ? <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-red-flag">{kicker}</p> : null}
+      <h1 className="max-w-4xl font-heading text-3xl leading-tight md:text-5xl">{title}</h1>
+      {body ? <p className="mt-4 max-w-3xl text-base leading-relaxed text-white/80 md:text-lg">{body}</p> : null}
+      <div className="mt-6 flex flex-wrap gap-3">
+        <a href="/estimate" className="rounded-md bg-red-flag px-5 py-3 font-semibold text-white hover:bg-red-flag/90">
+          {t.freeEstimate}
+        </a>
+        <a
+          href={company.phones.westPalmBeach.href}
+          className="rounded-md border border-white/30 px-5 py-3 font-semibold text-white hover:bg-white/10"
+        >
+          {t.call} {company.phones.westPalmBeach.display}
+        </a>
+      </div>
+    </>
+  );
   return (
     <section className="bg-navy-deep text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
-        <SiteLogo className="mb-6" imageClassName="h-24 md:h-28" />
-        {kicker ? <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-red-flag">{kicker}</p> : null}
-        <h1 className="max-w-4xl font-heading text-3xl leading-tight md:text-5xl">{title}</h1>
-        {body ? <p className="mt-4 max-w-3xl text-base leading-relaxed text-white/80 md:text-lg">{body}</p> : null}
-        <div className="mt-6 flex flex-wrap gap-3">
-          <a href="/estimate" className="rounded-md bg-red-flag px-5 py-3 font-semibold text-white hover:bg-red-flag/90">
-            {t.freeEstimate}
-          </a>
-          <a
-            href={company.phones.westPalmBeach.href}
-            className="rounded-md border border-white/30 px-5 py-3 font-semibold text-white hover:bg-white/10"
-          >
-            {t.call} {company.phones.westPalmBeach.display}
-          </a>
-        </div>
+        {aside ? (
+          <div className="grid items-center gap-10 md:grid-cols-2">
+            <div>{copy}</div>
+            <div className="min-w-0">{aside}</div>
+          </div>
+        ) : (
+          copy
+        )}
       </div>
     </section>
   );
