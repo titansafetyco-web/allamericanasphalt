@@ -1,0 +1,516 @@
+import { pageCopy } from "@/content/copy";
+import { faqs } from "@/content/faqs";
+import { footerNav, primaryNav } from "@/content/nav";
+import { homeServices, serviceOptions } from "@/content/services";
+import { trustPoints } from "@/content/company";
+import { pageCopyEs } from "@/content/copy.es";
+import type { Locale } from "@/lib/i18n/locale";
+
+export const ui = {
+  en: {
+    licensedBar: "Licensed in Broward, Palm Beach & Martin Counties",
+    signIn: "Sign In",
+    signUp: "Sign Up",
+    signOut: "Sign Out",
+    account: "Account",
+    freeEstimate: "Free Estimate",
+    requestEstimate: "Request Estimate",
+    language: "Language",
+    english: "EN",
+    spanish: "ES",
+    contact: "Contact",
+    licenses: "Licenses",
+    serviceAreas: "Service areas",
+    terms: "Terms",
+    sitemap: "Sitemap",
+    rights: "All Rights Reserved.",
+    footerBlurb:
+      "Family-owned paving contractor serving municipalities, schools, HOAs, shopping centers, churches, private roads, and residential driveways across South Florida.",
+    call: "Call",
+    fax: "Fax",
+    closed: "Closed",
+    days: {
+      Monday: "Monday",
+      Tuesday: "Tuesday",
+      Wednesday: "Wednesday",
+      Thursday: "Thursday",
+      Friday: "Friday",
+      Saturday: "Saturday",
+      Sunday: "Sunday",
+    },
+    form: {
+      name: "Name",
+      phone: "Phone",
+      email: "Email",
+      service: "Service",
+      city: "City",
+      yourName: "Your name",
+      projectDetails: "Project details",
+      yourMessage: "Your message",
+      howDidWeDo: "How did we do?",
+      needPlaceholder: "What do you need?",
+      cityPlaceholder: "Where is the job?",
+      projectPlaceholder: "Tell us about the driveway, lot, or road",
+      helpPlaceholder: "How can we help?",
+      feedbackPlaceholder: "Compliment, complaint, or concern",
+      sending: "Sending…",
+      sendFeedback: "Send feedback",
+      sendMessage: "Send message",
+      requestEstimate: "Request free estimate",
+      missing: "Please add your name and phone number so we can reach you.",
+      thanksEstimate: "Thanks — we received your request. Call (561) 684-9183 if you need us sooner.",
+      thanksContact: "Thanks — we received your message. Call (561) 684-9183 if you need us sooner.",
+      thanksFeedback: "Thank you. We take every comment seriously and will follow up if we need more detail.",
+    },
+    home: {
+      years: "years experience",
+      licensed: "Licensed, bonded & insured",
+      sameDay: "Same-day service available",
+      getEstimate: "Get a free estimate",
+      estimateHint: "Tell us about the job. We typically respond the same business day.",
+      licensedInsured: "Licensed & insured",
+      licensedBody: "Broward, Palm Beach, and Martin licenses.",
+      yearsBody: "Family-owned since",
+      sameDayTitle: "Same-day service",
+      sameDayBody: "Available on qualifying jobs in WPB, Fort Lauderdale, Plantation, and Davie.",
+      startFinish: "Start to finish",
+      startFinishBody: "Site prep, paving, seal coating, striping, and safety installs.",
+      chooseTitle: "Choose West Palm Beach’s trusted paving company",
+      chooseBody: "Clear services. Straightforward next step. Pick the work you need.",
+      learnMore: "Learn more →",
+      recentWork: "Recent work",
+      recentBody: "Parking lots, driveways, HOA roads, and seal coating across South Florida.",
+      viewGallery: "View gallery →",
+      reviewsTitle: "What customers say",
+      areasTitle: "Providing asphalt and seal coating across South Florida",
+      serving: "Serving",
+      counties: "Counties — including these cities:",
+      ctaTitle: "Asphalt, seal coating — we’re ready to pave.",
+      ctaBody: "Call All American Asphalt LLC today for a free estimate on an upcoming project.",
+    },
+    pages: {
+      contactKicker: "Paving the way for you",
+      sendMessage: "Send a message",
+      galleryKicker: "Our work",
+      galleryTitle: "Project gallery",
+      galleryBody:
+        "Asphalt paving and seal coating across parking lots, driveways, HOA roads, churches, and commercial properties in Broward, Palm Beach, and Martin Counties.",
+      reviewsKicker: "Testimonials",
+      reviewsTitle: "Reviews",
+      reviewsBody:
+        "Customers across South Florida hire All American Asphalt for driveways, seal coating, and commercial lots. Here’s what they say.",
+      leaveTestimonial: "Leave a testimonial",
+      areasKicker: "South Florida",
+      areasTitle: "Where we pave",
+      areasBody:
+        "All American Asphalt LLC provides asphalt paving, seal coating, striping, speed bumps, and bollards throughout Broward, Palm Beach, and Martin Counties. No job is too big or too small.",
+      cityPages: "City pages",
+      alsoServing: "Also serving",
+      faqsKicker: "FAQs",
+      faqsTitle: "Frequently asked questions",
+      faqsBody:
+        "Fifteen years is the average lifespan of asphalt. Depending on the surface’s use and wear, it should be sealed every 2 years for protection. For answers on a specific project, call us.",
+      feedbackKicker: "Compliments · Complaints · Concerns",
+      feedbackTitle: "How did we do?",
+      feedbackBody: "We take customer feedback seriously. Tell us if you had a positive experience, or an unfavorable one.",
+      referralsKicker: "Trusted partners",
+      referralsTitle: "Referrals",
+      giveReferral: "Give a referral",
+      getReferral: "Get a referral",
+      referCta: "Refer us for the job",
+      referCtaBody: "If someone referred you, please share their name when you contact us.",
+      termsTitle: "Terms and Conditions",
+      userComments: "User comments",
+      sitemapTitle: "Sitemap",
+      sitemapBody: "Every public page on the new All American Asphalt website.",
+      mainPages: "Main pages",
+      blog: "Blog",
+      pavingIn: "Paving Company in",
+      asphaltKicker: "Asphalt services",
+      asphaltCta: "Questions about milling, overlays, or seal coating?",
+      asphaltCtaBody: "Call West Palm Beach at (561) 684-9183.",
+      sealKicker: "Seal coating",
+      patchwork: "Patchwork",
+      stripingTitle: "Parking lot striping and pavement marking",
+      gemSeal: "Gem Seal pavement sealer",
+      sealCta: "Protect your pavement before the next Florida rainy season.",
+      speedKicker: "Safety installs",
+      speedDevices: "Speed control devices",
+      bollards: "Bollards",
+      speedCta: "Invest in your property’s safety.",
+      speedCtaBody:
+        "We’re ready to install speed bumps, humps, tables, and bollards across West Palm Beach and surrounding cities.",
+      cityBody: "Licensed asphalt paving and seal coating for properties in {city} and nearby South Florida communities.",
+      cityCta: "Need paving in {city}?",
+      cityCtaBody: "Call (561) 684-9183 or request a free estimate.",
+      signInKicker: "Customer access",
+      signInTitle: "Sign in",
+      signInBody: "Sign in with email, Google, or Apple to view estimates and project updates.",
+      signUpTitle: "Create an account",
+      signUpBody: "Create an account with email, Google, or Apple to track paving estimates and job updates.",
+      authName: "Name",
+      authEmail: "Email",
+      authPhone: "Phone",
+      authPassword: "Password",
+      passwordPlaceholder: "Your password",
+      newPasswordPlaceholder: "At least 8 characters",
+      creating: "Creating account…",
+      signingIn: "Signing in…",
+      createAccount: "Create account",
+      signInCancelled: "Sign-in was cancelled or did not complete. Try again.",
+      haveAccount: "Already have an account?",
+      needAccount: "Need an account?",
+      continueGuest: "Continue as guest",
+      orContinue: "or continue with",
+      connecting: "Connecting…",
+      allWork: "All work",
+      asphaltPaving: "Asphalt paving",
+      sealCoating: "Seal coating",
+    },
+    serviceOptions: {
+      "Asphalt paving": "Asphalt paving",
+      "Asphalt repair / overlay": "Asphalt repair / overlay",
+      "Asphalt milling": "Asphalt milling",
+      "Seal coating": "Seal coating",
+      "Parking lot striping": "Parking lot striping",
+      "Speed bumps / bollards": "Speed bumps / bollards",
+      "HOA / community roads": "HOA / community roads",
+      Other: "Other",
+    },
+    nav: {
+      Home: "Home",
+      Services: "Services",
+      "Asphalt Paving": "Asphalt Paving",
+      "Seal Coating": "Seal Coating",
+      "Speed Bumps & Bollards": "Speed Bumps & Bollards",
+      Gallery: "Gallery",
+      Areas: "Areas",
+      Reviews: "Reviews",
+      Blog: "Blog",
+      "Asphalt Services": "Asphalt Services",
+      Referrals: "Referrals",
+      FAQs: "FAQs",
+      Feedback: "Feedback",
+      "Service Areas": "Service Areas",
+      "Contact Us": "Contact Us",
+      Terms: "Terms",
+      Sitemap: "Sitemap",
+    },
+  },
+  es: {
+    licensedBar: "Licencia en Broward, Palm Beach y Martin",
+    signIn: "Iniciar sesión",
+    signUp: "Crear cuenta",
+    signOut: "Cerrar sesión",
+    account: "Cuenta",
+    freeEstimate: "Estimado gratis",
+    requestEstimate: "Pedir estimado",
+    language: "Idioma",
+    english: "EN",
+    spanish: "ES",
+    contact: "Contacto",
+    licenses: "Licencias",
+    serviceAreas: "Áreas de servicio",
+    terms: "Términos",
+    sitemap: "Mapa del sitio",
+    rights: "Todos los derechos reservados.",
+    footerBlurb:
+      "Contratista de pavimentación familiar que atiende municipios, escuelas, asociaciones de propietarios, centros comerciales, iglesias, caminos privados y entradas residenciales en el sur de la Florida.",
+    call: "Llamar",
+    fax: "Fax",
+    closed: "Cerrado",
+    days: {
+      Monday: "Lunes",
+      Tuesday: "Martes",
+      Wednesday: "Miércoles",
+      Thursday: "Jueves",
+      Friday: "Viernes",
+      Saturday: "Sábado",
+      Sunday: "Domingo",
+    },
+    form: {
+      name: "Nombre",
+      phone: "Teléfono",
+      email: "Correo",
+      service: "Servicio",
+      city: "Ciudad",
+      yourName: "Su nombre",
+      projectDetails: "Detalles del proyecto",
+      yourMessage: "Su mensaje",
+      howDidWeDo: "¿Cómo lo hicimos?",
+      needPlaceholder: "¿Qué necesita?",
+      cityPlaceholder: "¿Dónde está el trabajo?",
+      projectPlaceholder: "Cuéntenos sobre la entrada, el estacionamiento o la calle",
+      helpPlaceholder: "¿Cómo podemos ayudarle?",
+      feedbackPlaceholder: "Elogio, queja o comentario",
+      sending: "Enviando…",
+      sendFeedback: "Enviar comentarios",
+      sendMessage: "Enviar mensaje",
+      requestEstimate: "Pedir estimado gratis",
+      missing: "Agregue su nombre y teléfono para poder comunicarnos.",
+      thanksEstimate: "Gracias — recibimos su solicitud. Llame al (561) 684-9183 si nos necesita antes.",
+      thanksContact: "Gracias — recibimos su mensaje. Llame al (561) 684-9183 si nos necesita antes.",
+      thanksFeedback: "Gracias. Tomamos cada comentario en serio y le escribiremos si necesitamos más detalles.",
+    },
+    home: {
+      years: "años de experiencia",
+      licensed: "Con licencia, fianza y seguro",
+      sameDay: "Servicio el mismo día disponible",
+      getEstimate: "Obtenga un estimado gratis",
+      estimateHint: "Cuéntenos del trabajo. Normalmente respondemos el mismo día hábil.",
+      licensedInsured: "Licencia y seguro",
+      licensedBody: "Licencias en Broward, Palm Beach y Martin.",
+      yearsBody: "Empresa familiar desde",
+      sameDayTitle: "Servicio el mismo día",
+      sameDayBody: "Disponible en trabajos que califican en West Palm Beach, Fort Lauderdale, Plantation y Davie.",
+      startFinish: "De principio a fin",
+      startFinishBody: "Preparación, pavimentación, sellado, rayado e instalaciones de seguridad.",
+      chooseTitle: "Elija la empresa de pavimentación de confianza en West Palm Beach",
+      chooseBody: "Servicios claros. Siguiente paso sencillo. Elija el trabajo que necesita.",
+      learnMore: "Más información →",
+      recentWork: "Trabajos recientes",
+      recentBody: "Estacionamientos, entradas, calles de HOA y sellado en todo el sur de la Florida.",
+      viewGallery: "Ver galería →",
+      reviewsTitle: "Lo que dicen los clientes",
+      areasTitle: "Pavimentación y sellado de asfalto en todo el sur de la Florida",
+      serving: "Servimos los condados de",
+      counties: "— incluidas estas ciudades:",
+      ctaTitle: "Asfalto y sellado — listos para pavimentar.",
+      ctaBody: "Llame hoy a All American Asphalt LLC para un estimado gratis.",
+    },
+    pages: {
+      contactKicker: "Pavimentamos el camino para usted",
+      sendMessage: "Enviar un mensaje",
+      galleryKicker: "Nuestro trabajo",
+      galleryTitle: "Galería de proyectos",
+      galleryBody:
+        "Pavimentación y sellado de asfalto en estacionamientos, entradas, calles de HOA, iglesias y propiedades comerciales en Broward, Palm Beach y Martin.",
+      reviewsKicker: "Testimonios",
+      reviewsTitle: "Opiniones",
+      reviewsBody:
+        "Clientes en el sur de la Florida contratan a All American Asphalt para entradas, sellado y estacionamientos comerciales. Esto es lo que dicen.",
+      leaveTestimonial: "Deje un testimonio",
+      areasKicker: "Sur de la Florida",
+      areasTitle: "Dónde pavimentamos",
+      areasBody:
+        "All American Asphalt LLC ofrece pavimentación, sellado, rayado, reductores de velocidad y bolardos en Broward, Palm Beach y Martin. Ningún trabajo es demasiado grande o pequeño.",
+      cityPages: "Páginas de ciudades",
+      alsoServing: "También servimos",
+      faqsKicker: "Preguntas",
+      faqsTitle: "Preguntas frecuentes",
+      faqsBody:
+        "Quince años es la vida útil promedio del asfalto. Según el uso, debe sellarse cada 2 años. Para un proyecto específico, llámenos.",
+      feedbackKicker: "Elogios · Quejas · Comentarios",
+      feedbackTitle: "¿Cómo lo hicimos?",
+      feedbackBody: "Tomamos los comentarios en serio. Cuéntenos si su experiencia fue positiva o no.",
+      referralsKicker: "Socios de confianza",
+      referralsTitle: "Referencias",
+      giveReferral: "Dar una referencia",
+      getReferral: "Recibir una referencia",
+      referCta: "Recomiéndenos para el trabajo",
+      referCtaBody: "Si alguien lo refirió, comparta su nombre cuando nos contacte.",
+      termsTitle: "Términos y condiciones",
+      userComments: "Comentarios de usuarios",
+      sitemapTitle: "Mapa del sitio",
+      sitemapBody: "Todas las páginas públicas del nuevo sitio de All American Asphalt.",
+      mainPages: "Páginas principales",
+      blog: "Blog",
+      pavingIn: "Empresa de pavimentación en",
+      asphaltKicker: "Servicios de asfalto",
+      asphaltCta: "¿Preguntas sobre fresado, sobrecapas o sellado?",
+      asphaltCtaBody: "Llame a West Palm Beach al (561) 684-9183.",
+      sealKicker: "Sellado",
+      patchwork: "Parches",
+      stripingTitle: "Rayado de estacionamientos y marcas viales",
+      gemSeal: "Sellador Gem Seal",
+      sealCta: "Proteja su pavimento antes de la próxima temporada de lluvias en la Florida.",
+      speedKicker: "Instalaciones de seguridad",
+      speedDevices: "Dispositivos de control de velocidad",
+      bollards: "Bolardos",
+      speedCta: "Invierta en la seguridad de su propiedad.",
+      speedCtaBody:
+        "Estamos listos para instalar reductores, lomadas, mesetas y bolardos en West Palm Beach y ciudades cercanas.",
+      cityBody: "Pavimentación y sellado de asfalto con licencia para propiedades en {city} y comunidades cercanas del sur de la Florida.",
+      cityCta: "¿Necesita pavimentación en {city}?",
+      cityCtaBody: "Llame al (561) 684-9183 o pida un estimado gratis.",
+      signInKicker: "Acceso de clientes",
+      signInTitle: "Iniciar sesión",
+      signUpTitle: "Crear una cuenta",
+      signInBody: "Entre con correo, Google o Apple para ver estimados y actualizaciones del proyecto.",
+      signUpBody: "Cree una cuenta con correo, Google o Apple para seguir estimados y actualizaciones del trabajo.",
+      authName: "Nombre",
+      authEmail: "Correo",
+      authPhone: "Teléfono",
+      authPassword: "Contraseña",
+      passwordPlaceholder: "Su contraseña",
+      newPasswordPlaceholder: "Al menos 8 caracteres",
+      creating: "Creando cuenta…",
+      signingIn: "Entrando…",
+      createAccount: "Crear cuenta",
+      signInCancelled: "El inicio de sesión se canceló o no se completó. Intente de nuevo.",
+      haveAccount: "¿Ya tiene una cuenta?",
+      needAccount: "¿Necesita una cuenta?",
+      continueGuest: "Continuar como invitado",
+      orContinue: "o continuar con",
+      connecting: "Conectando…",
+      allWork: "Todo el trabajo",
+      asphaltPaving: "Pavimentación de asfalto",
+      sealCoating: "Sellado",
+    },
+    serviceOptions: {
+      "Asphalt paving": "Pavimentación de asfalto",
+      "Asphalt repair / overlay": "Reparación / sobrecapa de asfalto",
+      "Asphalt milling": "Fresado de asfalto",
+      "Seal coating": "Sellado",
+      "Parking lot striping": "Rayado de estacionamientos",
+      "Speed bumps / bollards": "Reductores / bolardos",
+      "HOA / community roads": "Calles de HOA / comunidad",
+      Other: "Otro",
+    },
+    nav: {
+      Home: "Inicio",
+      Services: "Servicios",
+      "Asphalt Paving": "Pavimentación de asfalto",
+      "Seal Coating": "Sellado",
+      "Speed Bumps & Bollards": "Reductores y bolardos",
+      Gallery: "Galería",
+      Areas: "Áreas",
+      Reviews: "Opiniones",
+      Blog: "Blog",
+      "Asphalt Services": "Servicios de asfalto",
+      Referrals: "Referencias",
+      FAQs: "Preguntas",
+      Feedback: "Comentarios",
+      "Service Areas": "Áreas de servicio",
+      "Contact Us": "Contáctenos",
+      Terms: "Términos",
+      Sitemap: "Mapa del sitio",
+    },
+  },
+} as const;
+
+export const trustPointsEs = [
+  "Con licencia, fianza y seguro",
+  "Calificación A+ del BBB",
+  "Miembro de la Cámara de Comercio",
+  "Servicio el mismo día en trabajos que califican",
+  "Ningún trabajo es demasiado grande o pequeño",
+  "Satisfacción garantizada",
+] as const;
+
+export const homeServicesEs = [
+  {
+    ...homeServices[0],
+    title: "Asociaciones de propietarios",
+    body: "Trabajamos con asociaciones de propietarios para entregar calles y entradas compartidas suaves y duraderas. El equipo minimiza la interrupción a los residentes y mejora la apariencia y el valor de la propiedad.",
+  },
+  {
+    ...homeServices[1],
+    title: "Estacionamientos comerciales",
+    body: "Desde lotes de negocios pequeños hasta centros comerciales grandes, pavimentamos estacionamientos durables y accesibles ADA que resisten el tráfico pesado y el clima de la Florida. Incluye diseño y rayado profesional.",
+  },
+  {
+    ...homeServices[2],
+    title: "Entradas residenciales",
+    body: "Instalamos entradas de asfalto suaves y atractivas, hechas para durar. Ya sea reemplazo o instalación nueva, nuestro equipo garantiza un trabajo limpio y eficiente.",
+  },
+  {
+    ...homeServices[3],
+    title: "Control de velocidad, seguridad y bolardos",
+    body: "También instalamos reductores de velocidad y bolardos. Instalamos, reparamos y mantenemos dispositivos de control de velocidad y bolardos de protección para mejorar la seguridad y el flujo del tráfico.",
+  },
+  {
+    ...homeServices[4],
+    title: "Servicio de rayado",
+    body: "El rayado marca pavimentos en estacionamientos, plazas, hoteles, HOAs y apartamentos para guiar a peatones y conductores. Es una parte esencial de cualquier proyecto de pavimentación.",
+  },
+  {
+    ...homeServices[5],
+    title: "Trabajo de calles",
+    body: "Entregamos calles de asfalto duraderas, diseñadas para tráfico pesado y el clima de la Florida. Ya sea una calle nueva, resurfacing o reparación, el equipo deja un acabado suave y duradero.",
+  },
+] as const;
+
+export const faqsEs = [
+  {
+    question: "¿Por qué elegir All American Asphalt frente a otras empresas?",
+    answer:
+      "Estamos dedicados a usted y a su proyecto, y buscamos siempre el más alto nivel de calidad. Ofrecemos comunicación escrita y verbal durante el trabajo para mantenerlos informados. Nuestra meta es superar las expectativas del cliente.",
+  },
+  {
+    question: "¿Necesito mantenimiento y reparaciones de asfalto? ¿Cómo lo sé?",
+    answer:
+      "El asfalto se deteriora de varias formas: grietas de cocodrilo, roderas, empujes y hundimientos. Programe mantenimiento cuando vea grietas, huecos u otros daños. Si no se reparan, los problemas crecen y cuestan más.",
+  },
+  {
+    question: "¿Cuánto tiempo debo esperar para usar asfalto recién pavimentado?",
+    answer:
+      "Después de pavimentar una entrada o estacionamiento, espere 72 horas antes de manejar o caminar sobre la superficie. En calles, se puede circular cuando el asfalto ya está compactado.",
+  },
+  {
+    question: "¿Cuándo debo sellar el asfalto?",
+    answer:
+      "Depende del tipo de sellado. Seis semanas después del proyecto podemos aplicar un sellador a base de aceite. Con sellador de látex, hay que esperar un año completo.",
+  },
+  {
+    question: "¿Cuánto dura el asfalto?",
+    answer:
+      "Quince años es la vida útil promedio. Según el uso, debe sellarse cada 2 años. El asfalto es una inversión y un activo; en buen estado aumenta el valor y la apariencia de su propiedad por muchos años.",
+  },
+  {
+    question: "¿Cuánto cuesta pavimentar con asfalto?",
+    answer:
+      "El costo promedio depende del tamaño del trabajo y del tipo de servicio. Mientras más grande el estacionamiento o la calle, más cuesta. Llame para un estimado gratis.",
+  },
+  {
+    question: "¿Cuánto cuesta el sellado?",
+    answer:
+      "El sellado es bastante más económico que pavimentar con asfalto o concreto, pero debe hacerse cada tres años.",
+  },
+] as const;
+
+export function getUi(locale: Locale) {
+  return ui[locale];
+}
+
+export function getPageCopy(locale: Locale) {
+  return locale === "es" ? pageCopyEs : pageCopy;
+}
+
+export function getFaqs(locale: Locale) {
+  return locale === "es" ? faqsEs : faqs;
+}
+
+export function getHomeServices(locale: Locale) {
+  return locale === "es" ? homeServicesEs : homeServices;
+}
+
+export function getTrustPoints(locale: Locale) {
+  return locale === "es" ? trustPointsEs : trustPoints;
+}
+
+export function getPrimaryNav(locale: Locale) {
+  const labels = ui[locale].nav;
+  return primaryNav.map((item) => {
+    if ("children" in item && item.children) {
+      return {
+        ...item,
+        label: labels[item.label],
+        children: item.children.map((child) => ({ ...child, label: labels[child.label] })),
+      };
+    }
+    return { ...item, label: labels[item.label] };
+  });
+}
+
+export function getFooterNav(locale: Locale) {
+  const labels = ui[locale].nav;
+  return footerNav.map((item) => ({ ...item, label: labels[item.label] }));
+}
+
+export function getServiceOptions(locale: Locale) {
+  return serviceOptions.map((option) => ({
+    value: option,
+    label: ui[locale].serviceOptions[option],
+  }));
+}

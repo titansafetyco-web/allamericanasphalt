@@ -130,7 +130,7 @@
     @apply font-sans;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   body {
     @apply bg-background text-foreground;
@@ -138,7 +138,7 @@
     width: 100%;
     max-width: 100%;
     min-height: 100dvh;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-heading), ui-sans-serif, system-ui, sans-serif;

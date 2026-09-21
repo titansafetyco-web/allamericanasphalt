@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CrmSettingsProvider } from "@/components/crm/CrmSettingsProvider";
 import { CrmShell } from "@/components/crm/CrmShell";
 
 export const metadata: Metadata = {
@@ -10,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function CrmLayout({ children }: { children: React.ReactNode }) {
-  return <CrmShell>{children}</CrmShell>;
+  return (
+    <CrmSettingsProvider>
+      <CrmShell>{children}</CrmShell>
+    </CrmSettingsProvider>
+  );
 }

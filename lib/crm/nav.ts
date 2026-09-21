@@ -17,5 +17,5 @@ export const crmNav = [
   { href: "/crm/jobs", label: "Jobs", icon: HardHat },
   { href: "/crm/customers", label: "Customers", icon: Users },
   { href: "/crm/schedule", label: "Schedule", icon: CalendarDays },
-  { href: "/crm/profile", label: "Profile", icon: CircleUser },
+  { href: "/crm/profile", label: "Profile", heading: "Settings", icon: CircleUser },
 ] as const;

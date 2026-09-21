@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { company } from "@/content/company";
+import { getUi } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
 
-export function PageHero({
+export async function PageHero({
   kicker,
   title,
   body,
@@ -10,6 +11,7 @@ export function PageHero({
   title: string;
   body?: string;
 }) {
+  const t = getUi(await getLocale());
   return (
     <section className="bg-navy-deep text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 md:py-16">
@@ -17,14 +19,14 @@ export function PageHero({
         <h1 className="max-w-4xl font-heading text-3xl leading-tight md:text-5xl">{title}</h1>
         {body ? <p className="mt-4 max-w-3xl text-base leading-relaxed text-white/80 md:text-lg">{body}</p> : null}
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/contact-us" className="rounded-md bg-red-flag px-5 py-3 font-semibold text-white hover:bg-red-flag/90">
-            Free Estimate
-          </Link>
+          <a href="/contact-us" className="rounded-md bg-red-flag px-5 py-3 font-semibold text-white hover:bg-red-flag/90">
+            {t.freeEstimate}
+          </a>
           <a
             href={company.phones.westPalmBeach.href}
             className="rounded-md border border-white/30 px-5 py-3 font-semibold text-white hover:bg-white/10"
           >
-            Call {company.phones.westPalmBeach.display}
+            {t.call} {company.phones.westPalmBeach.display}
           </a>
         </div>
       </div>
@@ -32,7 +34,8 @@ export function PageHero({
   );
 }
 
-export function CtaBand({ title, body }: { title: string; body?: string }) {
+export async function CtaBand({ title, body }: { title: string; body?: string }) {
+  const t = getUi(await getLocale());
   return (
     <section className="bg-red-flag text-white">
       <div className="mx-auto flex max-w-7xl flex-row items-center justify-between gap-6 px-4 py-10 max-md:flex-col max-md:items-start">
@@ -41,9 +44,9 @@ export function CtaBand({ title, body }: { title: string; body?: string }) {
           {body ? <p className="mt-2 max-w-2xl text-white/90">{body}</p> : null}
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link href="/contact-us" className="rounded-md bg-white px-5 py-3 font-bold text-navy">
-            Request Estimate
-          </Link>
+          <a href="/contact-us" className="rounded-md bg-white px-5 py-3 font-bold text-navy">
+            {t.requestEstimate}
+          </a>
           <a href={company.phones.westPalmBeach.href} className="rounded-md border border-white/40 px-5 py-3 font-semibold">
             {company.phones.westPalmBeach.display}
           </a>

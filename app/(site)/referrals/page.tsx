@@ -1,23 +1,28 @@
 import type { Metadata } from "next";
 import { CtaBand, PageHero } from "@/components/site/PageHero";
-import { pageCopy } from "@/content/copy";
 import { referralGroups } from "@/content/referrals";
+import { getPageCopy, getUi } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
 
 export const metadata: Metadata = { title: "Referral Program" };
 
-export default function ReferralsPage() {
+export default async function ReferralsPage() {
+  const locale = await getLocale();
+  const copy = getPageCopy(locale);
+  const t = getUi(locale);
+
   return (
     <>
-      <PageHero kicker="Trusted partners" title="Referrals" body={pageCopy.referrals.intro} />
+      <PageHero kicker={t.pages.referralsKicker} title={t.pages.referralsTitle} body={copy.referrals.intro} />
       <section className="mx-auto max-w-5xl px-4 py-12">
         <div className="grid grid-cols-2 gap-8 max-md:grid-cols-1">
           <article>
-            <h2 className="font-heading text-2xl text-navy">Give a referral</h2>
-            <p className="mt-3 leading-relaxed text-foreground/85">{pageCopy.referrals.give}</p>
+            <h2 className="font-heading text-2xl text-navy">{t.pages.giveReferral}</h2>
+            <p className="mt-3 leading-relaxed text-foreground/85">{copy.referrals.give}</p>
           </article>
           <article>
-            <h2 className="font-heading text-2xl text-navy">Get a referral</h2>
-            <p className="mt-3 leading-relaxed text-foreground/85">{pageCopy.referrals.get}</p>
+            <h2 className="font-heading text-2xl text-navy">{t.pages.getReferral}</h2>
+            <p className="mt-3 leading-relaxed text-foreground/85">{copy.referrals.get}</p>
           </article>
         </div>
         <div className="mt-12 grid grid-cols-2 gap-8 max-md:grid-cols-1">
@@ -33,7 +38,7 @@ export default function ReferralsPage() {
           ))}
         </div>
       </section>
-      <CtaBand title="Refer us for the job" body="If someone referred you, please share their name when you contact us." />
+      <CtaBand title={t.pages.referCta} body={t.pages.referCtaBody} />
     </>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Oswald, Source_Sans_3 } from "next/font/google";
 import { company } from "@/content/company";
+import { getLocale } from "@/lib/i18n/server";
 import "./globals.css";
 
 const heading = Oswald({
@@ -26,9 +27,10 @@ export const metadata: Metadata = {
   icons: { icon: "/logo.png", apple: "/logo.png" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
   return (
-    <html lang="en" className={`${heading.variable} ${sans.variable} antialiased`} suppressHydrationWarning>
+    <html lang={locale} className={`${heading.variable} ${sans.variable} antialiased`} suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col bg-background font-sans text-foreground">{children}</body>
     </html>
   );

@@ -4,17 +4,27 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { galleryImages, type GalleryCategory } from "@/content/gallery";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { getUi } from "@/lib/i18n/messages";
+import type { Locale } from "@/lib/i18n/locale";
 import { cn } from "@/lib/utils";
 
-const filters: { id: "all" | GalleryCategory; label: string }[] = [
-  { id: "all", label: "All work" },
-  { id: "paving", label: "Asphalt paving" },
-  { id: "sealcoating", label: "Seal coating" },
-];
-
-export function GalleryGrid({ limit, category }: { limit?: number; category?: GalleryCategory }) {
+export function GalleryGrid({
+  limit,
+  category,
+  locale = "en",
+}: {
+  limit?: number;
+  category?: GalleryCategory;
+  locale?: Locale;
+}) {
   const [filter, setFilter] = useState<"all" | GalleryCategory>(category ?? "all");
   const [active, setActive] = useState<(typeof galleryImages)[number] | null>(null);
+  const t = getUi(locale);
+  const filters: { id: "all" | GalleryCategory; label: string }[] = [
+    { id: "all", label: t.pages.allWork },
+    { id: "paving", label: t.pages.asphaltPaving },
+    { id: "sealcoating", label: t.pages.sealCoating },
+  ];
 
   const items = useMemo(() => {
     const list = galleryImages.filter((img) => (filter === "all" ? true : img.category === filter));
@@ -29,6 +39,7 @@ export function GalleryGrid({ limit, category }: { limit?: number; category?: Ga
             <button
               key={f.id}
               type="button"
+              suppressHydrationWarning
               onClick={() => setFilter(f.id)}
               className={cn(
                 "rounded-full border px-4 py-2 text-sm font-semibold",
@@ -45,6 +56,7 @@ export function GalleryGrid({ limit, category }: { limit?: number; category?: Ga
           <button
             key={img.src}
             type="button"
+            suppressHydrationWarning
             onClick={() => setActive(img)}
             className="group overflow-hidden rounded-xl bg-asphalt"
           >

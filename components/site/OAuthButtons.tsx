@@ -4,6 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { Button } from "@/components/ui/button";
+import { getUi } from "@/lib/i18n/messages";
+import type { Locale } from "@/lib/i18n/locale";
 
 function GoogleIcon() {
   return (
@@ -36,9 +38,10 @@ function AppleIcon() {
   );
 }
 
-export function OAuthButtons() {
+export function OAuthButtons({ locale = "en" }: { locale?: Locale }) {
   const [error, setError] = useState("");
   const [pending, setPending] = useState<"google" | "apple" | null>(null);
+  const t = getUi(locale);
 
   async function startOAuth(provider: "google" | "apple") {
     if (!isSupabaseConfigured()) {
@@ -63,7 +66,7 @@ export function OAuthButtons() {
   return (
     <div className="grid gap-2">
       <div className="relative my-1 text-center text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-        <span className="bg-white px-2">or continue with</span>
+        <span className="bg-white px-2">{t.pages.orContinue}</span>
         <span className="absolute inset-x-0 top-1/2 -z-10 h-px bg-border" />
       </div>
       <Button
@@ -74,7 +77,7 @@ export function OAuthButtons() {
         onClick={() => startOAuth("google")}
       >
         <GoogleIcon />
-        {pending === "google" ? "Connecting…" : "Google"}
+        {pending === "google" ? t.pages.connecting : "Google"}
       </Button>
       <Button
         type="button"
@@ -84,7 +87,7 @@ export function OAuthButtons() {
         onClick={() => startOAuth("apple")}
       >
         <AppleIcon />
-        {pending === "apple" ? "Connecting…" : "Apple"}
+        {pending === "apple" ? t.pages.connecting : "Apple"}
       </Button>
       {error ? (
         <p className="text-sm text-destructive" role="status">

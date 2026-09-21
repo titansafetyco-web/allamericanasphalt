@@ -7,6 +7,8 @@ import type { FormState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OAuthButtons } from "@/components/site/OAuthButtons";
+import { getUi } from "@/lib/i18n/messages";
+import type { Locale } from "@/lib/i18n/locale";
 import { cn } from "@/lib/utils";
 
 const initial: FormState = { ok: false, message: "" };
@@ -14,12 +16,15 @@ const initial: FormState = { ok: false, message: "" };
 export function AuthForm({
   mode,
   error,
+  locale = "en",
 }: {
   mode: "signin" | "signup";
   error?: string;
+  locale?: Locale;
 }) {
   const [state, action, pending] = useActionState(submitAuth, initial);
   const isSignUp = mode === "signup";
+  const t = getUi(locale);
 
   return (
     <div className="grid gap-4">
@@ -30,15 +35,15 @@ export function AuthForm({
         {isSignUp ? (
           <div className="grid gap-1.5">
             <label htmlFor="auth-name" className="text-sm font-medium">
-              Name
-            </label>
-            <Input id="auth-name" name="name" required autoComplete="name" placeholder="Your name" className="h-11 bg-white" />
+            {t.pages.authName}
+          </label>
+          <Input id="auth-name" name="name" required autoComplete="name" placeholder={t.form.yourName} className="h-11 bg-white" />
           </div>
         ) : null}
 
         <div className="grid gap-1.5">
           <label htmlFor="auth-email" className="text-sm font-medium">
-            Email
+            {t.pages.authEmail}
           </label>
           <Input
             id="auth-email"
@@ -54,7 +59,7 @@ export function AuthForm({
         {isSignUp ? (
           <div className="grid gap-1.5">
             <label htmlFor="auth-phone" className="text-sm font-medium">
-              Phone
+              {t.pages.authPhone}
             </label>
             <Input
               id="auth-phone"
@@ -69,7 +74,7 @@ export function AuthForm({
 
         <div className="grid gap-1.5">
           <label htmlFor="auth-password" className="text-sm font-medium">
-            Password
+            {t.pages.authPassword}
           </label>
           <Input
             id="auth-password"
@@ -78,18 +83,18 @@ export function AuthForm({
             required
             minLength={8}
             autoComplete={isSignUp ? "new-password" : "current-password"}
-            placeholder={isSignUp ? "At least 8 characters" : "Your password"}
+            placeholder={isSignUp ? t.pages.newPasswordPlaceholder : t.pages.passwordPlaceholder}
             className="h-11 bg-white"
           />
         </div>
 
         <Button type="submit" disabled={pending} className="mt-1 h-12 bg-red-flag text-base font-bold text-white hover:bg-red-flag/90">
-          {pending ? (isSignUp ? "Creating account…" : "Signing in…") : isSignUp ? "Create account" : "Sign in"}
+          {pending ? (isSignUp ? t.pages.creating : t.pages.signingIn) : isSignUp ? t.pages.createAccount : t.signIn}
         </Button>
 
         {error ? (
           <p className="text-sm text-destructive" role="status">
-            Sign-in was cancelled or did not complete. Try again.
+            {t.pages.signInCancelled}
           </p>
         ) : null}
         {state.message ? (
@@ -99,28 +104,28 @@ export function AuthForm({
         ) : null}
       </form>
 
-      <OAuthButtons />
+      <OAuthButtons locale={locale} />
 
       <p className="text-center text-sm text-muted-foreground">
         {isSignUp ? (
           <>
-            Already have an account?{" "}
+            {t.pages.haveAccount}{" "}
             <Link href="/sign-in" className="font-semibold text-navy hover:underline">
-              Sign in
+              {t.signIn}
             </Link>
           </>
         ) : (
           <>
-            Need an account?{" "}
+            {t.pages.needAccount}{" "}
             <Link href="/sign-up" className="font-semibold text-navy hover:underline">
-              Sign up
+              {t.signUp}
             </Link>
           </>
         )}
       </p>
       <p className="text-center text-sm text-muted-foreground">
         <Link href="/crm" className="font-semibold text-navy hover:underline">
-          Continue as guest
+          {t.pages.continueGuest}
         </Link>
       </p>
     </div>

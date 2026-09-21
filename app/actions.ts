@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { saveCrmMessage } from "@/lib/crm/messages";
+import { parseLocale } from "@/lib/i18n/locale";
+import { getUi } from "@/lib/i18n/messages";
 
 export type FormState = {
   ok: boolean;
@@ -14,9 +16,10 @@ export async function submitLead(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  const form = getUi(parseLocale(String(formData.get("locale") ?? ""))).form;
   const honeypot = String(formData.get("company") ?? "").trim();
   if (honeypot) {
-    return { ok: true, message: "Thanks — we received your message." };
+    return { ok: true, message: form.thanksContact };
   }
 
   const payload = {
@@ -30,7 +33,7 @@ export async function submitLead(
   };
 
   if (!payload.name || !payload.phone) {
-    return { ok: false, message: "Please add your name and phone number so we can reach you." };
+    return { ok: false, message: form.missing };
   }
 
   const kind =
@@ -97,9 +100,9 @@ export async function submitLead(
     ok: true,
     message:
       kind === "feedback"
-        ? "Thank you. We take every comment seriously and will follow up if we need more detail."
+        ? form.thanksFeedback
         : kind === "contact"
-          ? "Thanks — we received your message. Call (561) 684-9183 if you need us sooner."
-          : "Thanks — we received your request. Call (561) 684-9183 if you need us sooner.",
+          ? form.thanksContact
+          : form.thanksEstimate,
   };
 }

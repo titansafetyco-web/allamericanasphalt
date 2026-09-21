@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ArrowLeft, LogOut, Menu, X } from "lucide-react";
 import { signOut } from "@/app/auth-actions";
 import { Button } from "@/components/ui/button";
+import { useCrmSettings } from "@/components/crm/CrmSettingsProvider";
 import { crmNav } from "@/lib/crm/nav";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +19,9 @@ function isActive(pathname: string, href: string) {
 export function CrmShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const current = crmNav.find((item) => isActive(pathname, item.href))?.label ?? "CRM";
+  const { settings } = useCrmSettings();
+  const currentItem = crmNav.find((item) => isActive(pathname, item.href));
+  const current = (currentItem && "heading" in currentItem ? currentItem.heading : currentItem?.label) ?? "CRM";
 
   return (
     <div className="flex h-dvh overflow-hidden bg-[#eef1f6]">
@@ -29,16 +32,21 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
         )}
       >
         <div className="relative shrink-0 border-b border-white/10 px-4 py-5">
-          <Link href="/crm" className="flex flex-col items-start gap-1 pr-10 md:pr-0" onClick={() => setOpen(false)}>
-            <Image
-              src="/logo.png"
-              alt="All American Asphalt"
-              width={2000}
-              height={760}
-              className="h-20 w-auto max-w-full"
-              unoptimized
-            />
-            <span className="font-heading text-sm tracking-[0.18em] text-white/80">CRM/ INVOICE</span>
+          <Link href="/crm" className="flex flex-col items-center gap-2 text-center" onClick={() => setOpen(false)}>
+            <span className="w-full rounded-xl bg-white p-2.5 shadow-md ring-1 ring-white/40">
+              <Image
+                src="/logo.png"
+                alt="All American Asphalt"
+                width={2000}
+                height={760}
+                className="mx-auto h-24 w-auto max-w-full object-contain"
+                quality={100}
+                unoptimized
+                priority
+              />
+            </span>
+            <span className="font-heading text-sm tracking-[0.18em] text-white/80">CRM / INVOICE</span>
+            <span className="text-[11px] font-medium text-white/55">{settings.companyName}</span>
           </Link>
           <Button
             variant="ghost"
@@ -111,10 +119,7 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
           >
             <Menu />
           </Button>
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-red-flag">All American Asphalt</p>
-            <h1 className="font-heading text-xl text-navy md:text-2xl">{current}</h1>
-          </div>
+          <h1 className="font-heading text-xl text-navy md:text-2xl">{current}</h1>
         </header>
         <div className="flex-1 px-4 py-6 md:px-6">{children}</div>
       </div>

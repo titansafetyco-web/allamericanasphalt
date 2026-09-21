@@ -2,12 +2,18 @@
 
 import { FilterTable } from "@/components/crm/FilterTable";
 import { StatusBadge } from "@/components/crm/StatusBadge";
+import { useCrmSettings } from "@/components/crm/CrmSettingsProvider";
 import { estimates, formatDate, money } from "@/lib/crm/data";
 
 export default function EstimatesPage() {
+  const { settings } = useCrmSettings();
+
   return (
     <div className="mx-auto grid max-w-7xl gap-4">
-      <p className="text-sm text-muted-foreground">Quotes sent from the office. Drafts are waiting on a site visit or takeoff.</p>
+      <p className="text-sm text-muted-foreground">
+        Quotes sent from the office. Prefix {settings.invoicePrefix}, valid {settings.estimateValidDays} days, tax{" "}
+        {settings.taxRate}%. {settings.paymentTerms}.
+      </p>
       <FilterTable
         rows={estimates}
         placeholder="Search estimates"

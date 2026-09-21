@@ -4,6 +4,8 @@ import { CtaBand, PageHero } from "@/components/site/PageHero";
 import { WpContent } from "@/components/site/WpContent";
 import { cities, cityBySlug } from "@/content/areas";
 import { decodeHtml, getPage } from "@/lib/content";
+import { getUi } from "@/lib/i18n/messages";
+import { getLocale } from "@/lib/i18n/server";
 
 export const dynamicParams = false;
 
@@ -23,18 +25,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function CityPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+  const [{ slug }, locale] = await Promise.all([params, getLocale()]);
   const city = cityBySlug(slug);
   const page = getPage(slug);
   if (!city || !page) notFound();
+  const t = getUi(locale);
 
   return (
     <>
-      <PageHero kicker={city.name} title={decodeHtml(page.title)} body={`Licensed asphalt paving and seal coating for properties in ${city.name} and nearby South Florida communities.`} />
+      <PageHero
+        kicker={city.name}
+        title={decodeHtml(page.title)}
+        body={t.pages.cityBody.replace("{city}", city.name)}
+      />
       <section className="mx-auto max-w-4xl px-4 py-12">
         <WpContent html={page.html} />
       </section>
-      <CtaBand title={`Need paving in ${city.name}?`} body="Call (561) 684-9183 or request a free estimate." />
+      <CtaBand
+        title={t.pages.cityCta.replace("{city}", city.name)}
+        body={t.pages.cityCtaBody}
+      />
     </>
   );
 }
