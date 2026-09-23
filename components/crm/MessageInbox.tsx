@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { markMessageRead } from "@/app/crm-actions";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { markMessageRead, setMessageStatus } from "@/app/crm-actions";
+import { StatusBadge } from "@/components/crm/StatusBadge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { CrmMessage, MessageKind } from "@/lib/crm/messages";
+import type { CrmMessage, MessageKind, MessageStatus } from "@/lib/crm/messages";
 import { parseSupportTranscript } from "@/lib/support/transcript";
 import { cn } from "@/lib/utils";
 
-type FilterId = "all" | "estimate" | "contact" | "support";
+type FilterId = "all" | "estimate" | "contact" | "support" | "draft";
 
 const filters: { id: FilterId; label: string; hint: string; empty: string }[] = [
   {
@@ -30,14 +33,20 @@ const filters: { id: FilterId; label: string; hint: string; empty: string }[] = 
   },
   {
     id: "support",
-    label: "Support",
+    label: "Chat Support",
     hint: "Customer service conversations from the website chat bubble land here.",
     empty: "No customer service conversations yet. Website support chats, texts, and live-agent requests will show up here.",
+  },
+  {
+    id: "draft",
+    label: "Drafts",
+    hint: "Estimate requests saved as drafts stay here until you accept or deny them.",
+    empty: "No drafts yet. Use Draft on an estimate request to save it here.",
   },
 ];
 
 function isFilterId(value: string | undefined): value is FilterId {
-  return value === "all" || value === "estimate" || value === "contact" || value === "support";
+  return value === "all" || value === "estimate" || value === "contact" || value === "support" || value === "draft";
 }
 
 function when(value: string) {
@@ -112,53 +121,70 @@ function splitRating(body: string) {
 export function MessageInbox({
   messages,
   initialFilter,
+  initialId,
 }: {
   messages: CrmMessage[];
   initialFilter?: string;
+  initialId?: string;
 }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<FilterId>(isFilterId(initialFilter) ? initialFilter : "all");
-  const [selectedId, setSelectedId] = useState(messages[0]?.id ?? "");
+  const [filter, setFilter] = useState<FilterId>(
+    initialId ? "all" : isFilterId(initialFilter) ? initialFilter : "all",
+  );
+  const [selectedId, setSelectedId] = useState(initialId || messages[0]?.id || "");
   const [readIds, setReadIds] = useState<Record<string, boolean>>({});
+  const [statuses, setStatuses] = useState<Record<string, MessageStatus>>({});
+  const [pendingId, setPendingId] = useState<string | null>(null);
 
-  const withReadState = useMemo(
+  const withLocalState = useMemo(
     () =>
       messages.map((message) => ({
         ...message,
         read: message.read || Boolean(readIds[message.id]),
+        status: statuses[message.id] ?? message.status,
       })),
-    [messages, readIds],
+    [messages, readIds, statuses],
   );
 
   const counts = useMemo(() => {
-    const unreadOf = (kind?: MessageKind) =>
-      withReadState.filter((message) => !message.read && (!kind || message.kind === kind)).length;
+    const openOf = (kind: MessageKind) =>
+      withLocalState.filter((message) => message.status === "open" && message.kind === kind);
+    const unreadOf = (list: typeof withLocalState) => list.filter((message) => !message.read).length;
+    const drafts = withLocalState.filter((message) => message.status === "draft");
+    const estimates = openOf("estimate");
+    const contacts = openOf("contact");
+    const support = openOf("support");
     return {
-      all: withReadState.length,
-      estimate: withReadState.filter((message) => message.kind === "estimate").length,
-      contact: withReadState.filter((message) => message.kind === "contact").length,
-      support: withReadState.filter((message) => message.kind === "support").length,
-      unreadAll: unreadOf(),
-      unreadEstimate: unreadOf("estimate"),
-      unreadContact: unreadOf("contact"),
-      unreadSupport: unreadOf("support"),
+      all: withLocalState.length,
+      estimate: estimates.length,
+      contact: contacts.length,
+      support: support.length,
+      draft: drafts.length,
+      unreadAll: unreadOf(withLocalState),
+      unreadEstimate: unreadOf(estimates),
+      unreadContact: unreadOf(contacts),
+      unreadSupport: unreadOf(support),
+      unreadDraft: unreadOf(drafts),
     };
-  }, [withReadState]);
+  }, [withLocalState]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return withReadState.filter((message) => {
-      if (filter === "estimate" && message.kind !== "estimate") return false;
-      if (filter === "contact" && message.kind !== "contact") return false;
-      if (filter === "support" && message.kind !== "support") return false;
+    return withLocalState.filter((message) => {
+      if (filter === "draft") {
+        if (message.status !== "draft") return false;
+      } else if (filter !== "all") {
+        if (message.status !== "open" || message.kind !== filter) return false;
+      }
       if (!needle) return true;
-      return `${message.name} ${message.phone} ${message.email} ${message.service} ${message.city} ${message.body} ${message.kind}`
+      return `${message.name} ${message.phone} ${message.email} ${message.service} ${message.city} ${message.body} ${message.kind} ${message.status}`
         .toLowerCase()
         .includes(needle);
     });
-  }, [filter, query, withReadState]);
+  }, [filter, query, withLocalState]);
 
-  const selected = filtered.find((message) => message.id === selectedId) ?? filtered[0] ?? null;
+  const selected = withLocalState.find((message) => message.id === selectedId) ?? filtered[0] ?? null;
   const selectedRating = selected ? splitRating(selected.body) : null;
   const activeFilter = filters.find((item) => item.id === filter) ?? filters[0];
   const unread =
@@ -168,7 +194,10 @@ export function MessageInbox({
         ? counts.unreadContact
         : filter === "support"
           ? counts.unreadSupport
-          : counts.unreadAll;
+          : filter === "draft"
+            ? counts.unreadDraft
+            : counts.unreadAll;
+  const locked = selected?.status === "accepted" || selected?.status === "denied";
 
   async function openMessage(id: string) {
     setSelectedId(id);
@@ -176,6 +205,32 @@ export function MessageInbox({
     if (message && !message.read && !readIds[id]) {
       setReadIds((current) => ({ ...current, [id]: true }));
       await markMessageRead(id);
+      router.refresh();
+    }
+  }
+
+  useEffect(() => {
+    if (!initialId) return;
+    setFilter("all");
+    setSelectedId(initialId);
+    const message = messages.find((item) => item.id === initialId);
+    if (!message || message.read) return;
+    setReadIds((current) => (current[initialId] ? current : { ...current, [initialId]: true }));
+    void markMessageRead(initialId).then(() => router.refresh());
+    // Open this message once when the notification link lands here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialId]);
+
+  async function decide(status: MessageStatus) {
+    if (!selected || locked || selected.kind !== "estimate") return;
+    setPendingId(selected.id);
+    setStatuses((current) => ({ ...current, [selected.id]: status }));
+    setReadIds((current) => ({ ...current, [selected.id]: true }));
+    if (status === "draft") setFilter("draft");
+    try {
+      await setMessageStatus(selected.id, status);
+    } finally {
+      setPendingId(null);
     }
   }
 
@@ -193,7 +248,9 @@ export function MessageInbox({
                     ? counts.contact
                     : item.id === "support"
                       ? counts.support
-                      : counts.all;
+                      : item.id === "draft"
+                        ? counts.draft
+                        : counts.all;
               const unreadCount =
                 item.id === "estimate"
                   ? counts.unreadEstimate
@@ -201,7 +258,9 @@ export function MessageInbox({
                     ? counts.unreadContact
                     : item.id === "support"
                       ? counts.unreadSupport
-                      : counts.unreadAll;
+                      : item.id === "draft"
+                        ? counts.unreadDraft
+                        : counts.unreadAll;
               return (
                 <button
                   key={item.id}
@@ -265,6 +324,11 @@ export function MessageInbox({
                     <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       {kindLabel(message.kind)}
                     </p>
+                    {message.status !== "open" ? (
+                      <div className="mt-1">
+                        <StatusBadge status={message.status} />
+                      </div>
+                    ) : null}
                     <p className="mt-1 truncate text-xs text-muted-foreground">
                       {message.kind === "support"
                         ? supportPreview(message)
@@ -283,7 +347,10 @@ export function MessageInbox({
             <article className="grid content-start gap-4 p-5">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-red-flag">{kindHeading(selected.kind)}</p>
-                <h2 className="mt-1 font-heading text-2xl text-navy">{selected.name}</h2>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <h2 className="font-heading text-2xl text-navy">{selected.name}</h2>
+                  {selected.status !== "open" ? <StatusBadge status={selected.status} /> : null}
+                </div>
                 <p className="mt-1 text-sm text-muted-foreground">{when(selected.createdAt)}</p>
               </div>
               <dl className="grid gap-2 text-sm sm:grid-cols-2">
@@ -353,6 +420,36 @@ export function MessageInbox({
                   </p>
                 </div>
               )}
+              {selected.kind === "estimate" ? (
+                <div className="flex flex-wrap gap-2 border-t pt-4">
+                  <Button
+                    type="button"
+                    disabled={locked || pendingId === selected.id}
+                    onClick={() => decide("accepted")}
+                    className="h-10 bg-navy px-4 font-bold text-white hover:bg-navy/90"
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={locked || pendingId === selected.id}
+                    onClick={() => decide("denied")}
+                    className="h-10 px-4 font-semibold"
+                  >
+                    Deny
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={locked || pendingId === selected.id || selected.status === "draft"}
+                    onClick={() => decide("draft")}
+                    className="h-10 px-4 font-semibold"
+                  >
+                    Draft
+                  </Button>
+                </div>
+              ) : null}
             </article>
           ) : null}
         </div>

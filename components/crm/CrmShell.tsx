@@ -8,6 +8,13 @@ import { ArrowLeft, LogOut, Menu, X } from "lucide-react";
 import { signOut } from "@/app/auth-actions";
 import { Button } from "@/components/ui/button";
 import { useCrmSettings } from "@/components/crm/CrmSettingsProvider";
+import {
+  HeaderMessageBell,
+  IncomingMessageToasts,
+  MessageNavAlerts,
+  useUnreadMessages,
+} from "@/components/crm/MessageAlerts";
+import type { MessageAlert } from "@/lib/crm/alerts";
 import { crmNav } from "@/lib/crm/nav";
 import { cn } from "@/lib/utils";
 
@@ -16,10 +23,17 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function CrmShell({ children }: { children: React.ReactNode }) {
+export function CrmShell({
+  children,
+  unreadMessages,
+}: {
+  children: React.ReactNode;
+  unreadMessages: MessageAlert[];
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { settings } = useCrmSettings();
+  const { unread, toasts, dismissToast } = useUnreadMessages(unreadMessages);
   const currentItem = crmNav.find((item) => isActive(pathname, item.href));
   const current = (currentItem && "heading" in currentItem ? currentItem.heading : currentItem?.label) ?? "CRM";
 
@@ -62,6 +76,16 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
           {crmNav.map((item) => {
             const Icon = item.icon;
             const active = isActive(pathname, item.href);
+            if (item.href === "/crm/messages") {
+              return (
+                <MessageNavAlerts
+                  key={item.href}
+                  active={active}
+                  unread={unread}
+                  onNavigate={() => setOpen(false)}
+                />
+              );
+            }
             return (
               <Link
                 key={item.href}
@@ -120,9 +144,11 @@ export function CrmShell({ children }: { children: React.ReactNode }) {
             <Menu />
           </Button>
           <h1 className="font-heading text-xl text-navy md:text-2xl">{current}</h1>
+          <HeaderMessageBell unread={unread} />
         </header>
         <div className="flex-1 px-4 py-6 md:px-6">{children}</div>
       </div>
+      <IncomingMessageToasts toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }

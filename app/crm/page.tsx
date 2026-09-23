@@ -6,68 +6,34 @@ import { WeekBoard } from "@/components/crm/WeekBoard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   activeJobs,
-  estimates,
-  estimatesOut,
   jobs,
-  leads,
   money,
-  openLeads,
-  pipelineValue,
 } from "@/lib/crm/data";
 import { listCrmMessages } from "@/lib/crm/messages";
+import { listLeads, listQuotes, summarizePipeline } from "@/lib/crm/pipeline";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
-
-const leadMix = [
-  { label: "New", value: leads.filter((lead) => lead.status === "new").length, color: "#0b2c6b" },
-  { label: "Contacted", value: leads.filter((lead) => lead.status === "contacted").length, color: "#1c5bb8" },
-  { label: "Quoted", value: leads.filter((lead) => lead.status === "quoted").length, color: "#d97706" },
-];
-
-const estimateMix = [
-  { label: "Draft", value: estimates.filter((estimate) => estimate.status === "draft").length, color: "#94a3b8" },
-  { label: "Sent", value: estimates.filter((estimate) => estimate.status === "sent").length, color: "#0b2c6b" },
-  { label: "Approved", value: estimates.filter((estimate) => estimate.status === "approved").length, color: "#059669" },
-  { label: "Declined", value: estimates.filter((estimate) => estimate.status === "declined").length, color: "#c8102e" },
-];
-
-const jobMix = [
-  { label: "Scheduled", value: jobs.filter((job) => job.status === "scheduled").length, color: "#0b2c6b" },
-  { label: "In progress", value: jobs.filter((job) => job.status === "in_progress").length, color: "#d97706" },
-  { label: "Complete", value: jobs.filter((job) => job.status === "complete").length, color: "#059669" },
-  { label: "On hold", value: jobs.filter((job) => job.status === "on_hold").length, color: "#c8102e" },
-];
-
-const pipelineMix = [
-  {
-    label: "New",
-    value: leads.filter((lead) => lead.status === "new").reduce((sum, lead) => sum + lead.value, 0),
-    color: "#0b2c6b",
-  },
-  {
-    label: "Contacted",
-    value: leads.filter((lead) => lead.status === "contacted").reduce((sum, lead) => sum + lead.value, 0),
-    color: "#1c5bb8",
-  },
-  {
-    label: "Quoted",
-    value: leads.filter((lead) => lead.status === "quoted").reduce((sum, lead) => sum + lead.value, 0),
-    color: "#d97706",
-  },
-];
 
 const conversationFilters = [
   { id: "all", label: "All", href: "/crm/messages" },
   { id: "estimate", label: "Estimates", href: "/crm/messages?filter=estimate" },
   { id: "contact", label: "Inbox", href: "/crm/messages?filter=contact" },
-  { id: "support", label: "Support", href: "/crm/messages?filter=support" },
+  { id: "support", label: "Chat Support", href: "/crm/messages?filter=support" },
+  { id: "draft", label: "Drafts", href: "/crm/messages?filter=draft" },
 ] as const;
 
 export default async function CrmOverviewPage() {
-  const messages = await listCrmMessages();
+  const [messages, leads, quotes] = await Promise.all([listCrmMessages(), listLeads(), listQuotes()]);
+  const { openLeads, pipelineValue, estimatesOut, leadMix, estimateMix, pipelineMix } = summarizePipeline(leads, quotes);
   const supportCount = messages.filter((message) => message.kind === "support").length;
   const unreadSupport = messages.filter((message) => message.kind === "support" && !message.read).length;
+  const jobMix = [
+    { label: "Scheduled", value: jobs.filter((job) => job.status === "scheduled").length, color: "#0b2c6b" },
+    { label: "In progress", value: jobs.filter((job) => job.status === "in_progress").length, color: "#d97706" },
+    { label: "Complete", value: jobs.filter((job) => job.status === "complete").length, color: "#059669" },
+    { label: "On hold", value: jobs.filter((job) => job.status === "on_hold").length, color: "#c8102e" },
+  ];
 
   return (
     <div className="mx-auto grid max-w-7xl gap-6">
@@ -147,10 +113,10 @@ export default async function CrmOverviewPage() {
         <Card className="bg-white">
           <CardHeader className="border-b">
             <CardTitle>Lead pipeline</CardTitle>
-            <CardDescription>Website, phone, and repeat work moving toward a job.</CardDescription>
+            <CardDescription>Approved quotes move into Won. Website, phone, and repeat work toward a job.</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
-            <LeadPipeline />
+            <LeadPipeline leads={leads} />
           </CardContent>
         </Card>
 

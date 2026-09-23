@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { CrmSettingsProvider } from "@/components/crm/CrmSettingsProvider";
 import { CrmShell } from "@/components/crm/CrmShell";
+import { listUnreadAlerts } from "@/lib/crm/alerts";
+import { listCrmMessages } from "@/lib/crm/messages";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -10,10 +14,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function CrmLayout({ children }: { children: React.ReactNode }) {
+export default async function CrmLayout({ children }: { children: React.ReactNode }) {
+  const unreadMessages = listUnreadAlerts(await listCrmMessages());
   return (
     <CrmSettingsProvider>
-      <CrmShell>{children}</CrmShell>
+      <CrmShell unreadMessages={unreadMessages}>{children}</CrmShell>
     </CrmSettingsProvider>
   );
 }

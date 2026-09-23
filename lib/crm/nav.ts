@@ -12,7 +12,7 @@ import {
 export const crmNav = [
   { href: "/crm", label: "Overview", icon: LayoutDashboard },
   { href: "/crm/leads", label: "Leads", icon: UserPlus },
-  { href: "/crm/estimates", label: "Estimates", icon: FileText },
+  { href: "/crm/invoices", label: "Invoices", icon: FileText },
   { href: "/crm/messages", label: "Messages", icon: MessageSquare },
   { href: "/crm/jobs", label: "Jobs", icon: HardHat },
   { href: "/crm/customers", label: "Customers", icon: Users },

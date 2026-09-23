@@ -4,11 +4,17 @@ import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export type MessageKind = "estimate" | "contact" | "feedback" | "support";
+export type MessageStatus = "open" | "accepted" | "denied" | "draft";
 
 const messageKinds = new Set<MessageKind>(["estimate", "contact", "feedback", "support"]);
+const messageStatuses = new Set<MessageStatus>(["open", "accepted", "denied", "draft"]);
 
 function parseKind(value: unknown): MessageKind {
   return messageKinds.has(value as MessageKind) ? (value as MessageKind) : "estimate";
+}
+
+function parseStatus(value: unknown): MessageStatus {
+  return messageStatuses.has(value as MessageStatus) ? (value as MessageStatus) : "open";
 }
 
 export type CrmMessage = {
@@ -16,6 +22,7 @@ export type CrmMessage = {
   createdAt: string;
   source: "website";
   kind: MessageKind;
+  status: MessageStatus;
   name: string;
   phone: string;
   email: string;
@@ -33,6 +40,7 @@ const seed: CrmMessage[] = [
     createdAt: "2026-09-21T14:12:00.000Z",
     source: "website",
     kind: "estimate",
+    status: "open",
     name: "Linda Ortiz",
     phone: "(561) 555-0142",
     email: "board@pbshoreshoa.com",
@@ -46,6 +54,7 @@ const seed: CrmMessage[] = [
     createdAt: "2026-09-20T18:40:00.000Z",
     source: "website",
     kind: "estimate",
+    status: "open",
     name: "Nina Patel",
     phone: "(772) 555-0133",
     email: "npate@ci.stuart.fl.us",
@@ -59,6 +68,7 @@ const seed: CrmMessage[] = [
     createdAt: "2026-09-21T16:05:00.000Z",
     source: "website",
     kind: "contact",
+    status: "open",
     name: "James Whitaker",
     phone: "(954) 555-0176",
     email: "jwhitaker@harborplazallc.com",
@@ -72,6 +82,7 @@ const seed: CrmMessage[] = [
     createdAt: "2026-09-19T20:18:00.000Z",
     source: "website",
     kind: "contact",
+    status: "open",
     name: "Angela Ruiz",
     phone: "(561) 555-0118",
     email: "angela.ruiz@email.com",
@@ -85,6 +96,7 @@ const seed: CrmMessage[] = [
     createdAt: "2026-09-21T17:22:00.000Z",
     source: "website",
     kind: "support",
+    status: "open",
     name: "Marcus Hale",
     phone: "(561) 555-0190",
     email: "marcus.hale@email.com",
@@ -102,7 +114,7 @@ function sortMessages(messages: CrmMessage[]) {
 function mergeMessages(...lists: CrmMessage[][]) {
   const byId = new Map<string, CrmMessage>();
   for (const list of lists) {
-    for (const message of list) byId.set(message.id, message);
+    for (const message of list) byId.set(message.id, { ...message, status: parseStatus(message.status) });
   }
   return sortMessages([...byId.values()]);
 }
@@ -128,6 +140,7 @@ function fromRow(row: Record<string, unknown>): CrmMessage {
     createdAt: String(row.created_at ?? row.createdAt ?? new Date().toISOString()),
     source: "website",
     kind: parseKind(row.kind),
+    status: parseStatus(row.status),
     name: String(row.name ?? ""),
     phone: String(row.phone ?? ""),
     email: String(row.email ?? ""),
@@ -153,7 +166,7 @@ async function listFromSupabase() {
 export async function listCrmMessages() {
   const fromDb = await listFromSupabase();
   const fromFile = await readFileMessages();
-  return mergeMessages(fromDb ?? [], fromFile, seed);
+  return mergeMessages(seed, fromFile, fromDb ?? []);
 }
 
 function toRow(message: CrmMessage) {
@@ -162,6 +175,7 @@ function toRow(message: CrmMessage) {
     created_at: message.createdAt,
     source: message.source,
     kind: message.kind,
+    status: message.status,
     name: message.name,
     phone: message.phone,
     email: message.email,
@@ -181,6 +195,7 @@ async function persistMessage(message: CrmMessage, mode: "insert" | "upsert") {
           .from("crm_messages")
           .update({
             kind: message.kind,
+            status: message.status,
             name: message.name,
             phone: message.phone,
             email: message.email,
@@ -211,12 +226,18 @@ async function persistMessage(message: CrmMessage, mode: "insert" | "upsert") {
   return message;
 }
 
-export async function saveCrmMessage(input: Omit<CrmMessage, "id" | "createdAt" | "read" | "source"> & { id?: string }) {
+export async function saveCrmMessage(
+  input: Omit<CrmMessage, "id" | "createdAt" | "read" | "source" | "status"> & {
+    id?: string;
+    status?: MessageStatus;
+  },
+) {
   const message: CrmMessage = {
     id: input.id ?? crypto.randomUUID(),
     createdAt: new Date().toISOString(),
     source: "website",
     kind: input.kind,
+    status: input.status ?? "open",
     name: input.name,
     phone: input.phone,
     email: input.email,
@@ -228,36 +249,42 @@ export async function saveCrmMessage(input: Omit<CrmMessage, "id" | "createdAt" 
   return persistMessage(message, "insert");
 }
 
-export async function upsertCrmMessage(input: Omit<CrmMessage, "createdAt" | "read" | "source"> & { createdAt?: string }) {
-  const current = await readFileMessages();
+export async function upsertCrmMessage(
+  input: Omit<CrmMessage, "createdAt" | "read" | "source" | "status"> & {
+    createdAt?: string;
+    status?: MessageStatus;
+    read?: boolean;
+  },
+) {
+  const current = await listCrmMessages();
   const existing = current.find((message) => message.id === input.id);
   const message: CrmMessage = {
     id: input.id,
     createdAt: existing?.createdAt ?? input.createdAt ?? new Date().toISOString(),
     source: "website",
     kind: input.kind,
+    status: input.status ?? existing?.status ?? "open",
     name: input.name,
     phone: input.phone,
     email: input.email,
     service: input.service,
     city: input.city,
     body: input.body,
-    read: false,
+    read: input.read ?? existing?.read ?? false,
   };
   return persistMessage(message, "upsert");
 }
 
 export async function markCrmMessageRead(id: string) {
-  if (isSupabaseConfigured()) {
-    try {
-      const supabase = await createClient();
-      await supabase.from("crm_messages").update({ read: true }).eq("id", id);
-    } catch (error) {
-      console.error("crm_messages update failed", error);
-    }
-  }
+  const current = await listCrmMessages();
+  const existing = current.find((message) => message.id === id);
+  if (!existing) return;
+  await persistMessage({ ...existing, read: true }, "upsert");
+}
 
-  const current = await readFileMessages();
-  const next = current.map((message) => (message.id === id ? { ...message, read: true } : message));
-  if (next.length) await writeFileMessages(next);
+export async function updateCrmMessageStatus(id: string, status: MessageStatus) {
+  const current = await listCrmMessages();
+  const existing = current.find((message) => message.id === id);
+  if (!existing || existing.kind !== "estimate") return;
+  await persistMessage({ ...existing, status, read: true }, "upsert");
 }

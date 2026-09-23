@@ -38,6 +38,8 @@ yarn-error.log*
 
 # local CRM inbox (website form submissions)
 /data/crm-messages.json
+/data/crm-quotes.json
+/data/crm-leads.json
 
 # local editor and scrape originals
 .cursor/

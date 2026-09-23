@@ -1,5 +1,13 @@
 export type LeadStatus = "new" | "contacted" | "quoted" | "won" | "lost";
 export type EstimateStatus = "draft" | "sent" | "approved" | "declined";
+export type EstimateLine = {
+  id: string;
+  description: string;
+  qty: number;
+  unit: string;
+  unitPrice: number;
+};
+
 export type JobStatus = "scheduled" | "in_progress" | "complete" | "on_hold";
 export type ServiceType =
   | "Asphalt paving"
@@ -7,6 +15,16 @@ export type ServiceType =
   | "Striping"
   | "Speed bumps & bollards"
   | "Road work";
+
+export const serviceTypes: ServiceType[] = [
+  "Asphalt paving",
+  "Seal coating",
+  "Striping",
+  "Speed bumps & bollards",
+  "Road work",
+];
+
+export const quoteUnits = ["LS", "SQFT", "SY", "LF", "EA", "HR"] as const;
 
 export type Customer = {
   id: string;
@@ -46,6 +64,22 @@ export type Estimate = {
   amount: number;
   sentAt: string | null;
   validUntil: string;
+  notes?: string;
+  lines?: EstimateLine[];
+};
+
+export type InvoiceStatus = "sent" | "paid" | "overdue";
+
+export type Invoice = {
+  id: string;
+  number: string;
+  customer: string;
+  service: ServiceType;
+  city: string;
+  status: InvoiceStatus;
+  amount: number;
+  issuedAt: string;
+  dueAt: string;
 };
 
 export type Job = {
@@ -341,6 +375,20 @@ export const estimates: Estimate[] = [
   },
 ];
 
+export const invoices: Invoice[] = [
+  {
+    id: "inv-1",
+    number: "INV-24084",
+    customer: "Fort Lauderdale Logistics",
+    service: "Speed bumps & bollards",
+    city: "Fort Lauderdale",
+    status: "sent",
+    amount: 27600,
+    issuedAt: "2026-09-12",
+    dueAt: "2026-10-12",
+  },
+];
+
 export const jobs: Job[] = [
   {
     id: "j-1",
@@ -446,12 +494,37 @@ export function money(value: number) {
   }).format(value);
 }
 
+export function lineTotal(line: EstimateLine) {
+  const qty = Number(line.qty);
+  const unitPrice = Number(line.unitPrice);
+  if (!Number.isFinite(qty) || !Number.isFinite(unitPrice)) return 0;
+  return Math.round(qty * unitPrice);
+}
+
+export function quoteSubtotal(lines: EstimateLine[]) {
+  return lines.reduce((sum, line) => sum + lineTotal(line), 0);
+}
+
+export function defaultQuoteLines(estimate: Pick<Estimate, "id" | "service" | "amount" | "lines">): EstimateLine[] {
+  if (estimate.lines?.length) return estimate.lines.map((line) => ({ ...line }));
+  return [
+    {
+      id: `${estimate.id}-ls`,
+      description: estimate.service,
+      qty: 1,
+      unit: "LS",
+      unitPrice: estimate.amount,
+    },
+  ];
+}
+
 export function formatDate(value: string) {
+  const date = value.includes("T") ? new Date(value) : new Date(`${value}T12:00:00`);
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
-  }).format(new Date(`${value}T12:00:00`));
+  }).format(date);
 }
 
 export const pipelineValue = leads

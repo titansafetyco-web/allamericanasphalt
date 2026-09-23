@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { leads, money, type LeadStatus } from "@/lib/crm/data";
+import { money, type Lead, type LeadStatus } from "@/lib/crm/data";
 import { cn } from "@/lib/utils";
 
 const stages = [
@@ -20,7 +20,7 @@ function stageColor(status: LeadStatus) {
   return stages.find((stage) => stage.status === status)?.color ?? "#94a3b8";
 }
 
-export function LeadPipeline() {
+export function LeadPipeline({ leads }: { leads: Lead[] }) {
   const funnel = stages.map((stage) => {
     const items = leads.filter((lead) => lead.status === stage.status);
     return {

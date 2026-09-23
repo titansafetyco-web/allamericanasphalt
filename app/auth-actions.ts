@@ -63,30 +63,32 @@ export async function signOut() {
 }
 
 export async function updateMemberProfile(_prev: FormState, formData: FormData): Promise<FormState> {
-  if (!isSupabaseConfigured()) {
-    return { ok: false, message: "Member accounts are not connected yet." };
-  }
-
   const fullName = String(formData.get("full_name") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, message: "Please sign in again." };
+  if (!fullName) {
+    return { ok: false, message: "Please add your name." };
+  }
 
-  const { error } = await supabase.from("members").upsert({
-    id: user.id,
-    email: user.email,
-    full_name: fullName,
-    phone,
-    updated_at: new Date().toISOString(),
-  });
-  if (error) return { ok: false, message: error.message };
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { error } = await supabase.from("members").upsert({
+        id: user.id,
+        email: user.email,
+        full_name: fullName,
+        phone,
+        updated_at: new Date().toISOString(),
+      });
+      if (error) return { ok: false, message: error.message };
 
-  await supabase.auth.updateUser({
-    data: { full_name: fullName, phone },
-  });
+      await supabase.auth.updateUser({
+        data: { full_name: fullName, phone },
+      });
+    }
+  }
 
-  return { ok: true, message: "Profile saved." };
+  redirect("/crm");
 }

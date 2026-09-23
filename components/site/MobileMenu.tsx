@@ -54,11 +54,11 @@ export function MobileMenu({
           {signedIn ? (
             <>
               <a
-                href="/account"
+                href="/crm"
                 onClick={() => setOpen(false)}
-                className="rounded-md border border-white/25 px-3 py-3 text-center font-semibold"
+                className="rounded-md bg-white px-3 py-3 text-center font-bold text-navy"
               >
-                {t.account}
+                {t.dashboard}
               </a>
               <form action={signOut}>
                 <button type="submit" className="w-full rounded-md bg-white px-3 py-3 text-center font-bold text-navy">

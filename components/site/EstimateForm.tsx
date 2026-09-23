@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { submitLead, type FormState } from "@/app/actions";
 import { extraServiceCities } from "@/content/areas";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,14 @@ import type { Locale } from "@/lib/i18n/locale";
 import { cn } from "@/lib/utils";
 
 const initial: FormState = { ok: false, message: "" };
+
+function formatUsPhone(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (digits.length === 0) return "";
+  if (digits.length < 4) return digits;
+  if (digits.length < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
 
 export function EstimateForm({
   type = "estimate",
@@ -25,6 +33,7 @@ export function EstimateForm({
   locale?: Locale;
 }) {
   const [state, action, pending] = useActionState(submitLead, initial);
+  const [phone, setPhone] = useState("");
   const t = getUi(locale);
   const options = getServiceOptions(locale);
 
@@ -41,7 +50,19 @@ export function EstimateForm({
         </div>
         <div className="grid gap-1 md:gap-1.5">
           <label htmlFor={`${type}-phone`} suppressHydrationWarning className="text-xs font-bold text-black md:text-sm">{t.form.phone}</label>
-          <Input id={`${type}-phone`} name="phone" required type="tel" placeholder="(561) 000-0000" className="h-9 bg-white md:h-11" suppressHydrationWarning />
+          <Input
+            id={`${type}-phone`}
+            name="phone"
+            required
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="(561) 000-0000"
+            value={phone}
+            onChange={(event) => setPhone(formatUsPhone(event.target.value))}
+            className="h-9 bg-white md:h-11"
+            suppressHydrationWarning
+          />
         </div>
       </div>
 

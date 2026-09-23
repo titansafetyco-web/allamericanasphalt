@@ -27,7 +27,7 @@ export default async function HomePage() {
     <>
       <section className="relative isolate min-h-[44rem] overflow-hidden bg-[#071018] text-white md:min-h-[52rem]">
         <Image
-          src="/images/hero.webp"
+          src="/images/hero-hi.jpg"
           alt="Asphalt roller and paving crew on a newly paved road at sunset"
           fill
           priority

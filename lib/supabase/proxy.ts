@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
   const isAuthPage = path === "/sign-in" || path === "/sign-up";
   const isAccount = path === "/account" || path.startsWith("/account/");
 
-  if (!user && isAccount) {
+  if (!user && isAccount && process.env.NODE_ENV !== "development") {
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";
     url.searchParams.set("next", path);

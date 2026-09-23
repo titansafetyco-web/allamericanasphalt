@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { updateMemberProfile } from "@/app/auth-actions";
 import type { FormState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,9 @@ export function AccountForm({
   const [uploadMessage, setUploadMessage] = useState("");
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(avatarUrl);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  async function onFile(kind: "avatar" | "file", file: File | undefined) {
+  async function onAvatar(file: File | undefined) {
     if (!file) return;
     setUploading(true);
     setUploadMessage("");
@@ -35,13 +36,15 @@ export function AccountForm({
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      setUploadMessage("Please sign in again.");
+      const localUrl = URL.createObjectURL(file);
+      setPreview(localUrl);
+      setUploadMessage("Photo ready. Save profile to continue.");
       setUploading(false);
       return;
     }
 
     const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
-    const path = kind === "avatar" ? `${user.id}/avatar.${ext}` : `${user.id}/files/${Date.now()}-${file.name}`;
+    const path = `${user.id}/avatar.${ext}`;
     const { error } = await supabase.storage.from("members").upload(path, file, { upsert: true });
     if (error) {
       setUploadMessage(error.message);
@@ -49,18 +52,15 @@ export function AccountForm({
       return;
     }
 
-    if (kind === "avatar") {
-      await supabase.from("members").upsert({
-        id: user.id,
-        email: user.email,
-        avatar_path: path,
-        updated_at: new Date().toISOString(),
-      });
-      const signed = await supabase.storage.from("members").createSignedUrl(path, 60 * 60 * 24);
-      setPreview(signed.data?.signedUrl ?? preview);
-    }
-
-    setUploadMessage(kind === "avatar" ? "Photo saved." : "File uploaded to your member folder.");
+    await supabase.from("members").upsert({
+      id: user.id,
+      email: user.email,
+      avatar_path: path,
+      updated_at: new Date().toISOString(),
+    });
+    const signed = await supabase.storage.from("members").createSignedUrl(path, 60 * 60 * 24);
+    setPreview(signed.data?.signedUrl ?? preview);
+    setUploadMessage("Photo saved.");
     setUploading(false);
   }
 
@@ -78,14 +78,26 @@ export function AccountForm({
           )}
         </div>
         <div>
-          <label className="text-sm font-medium">Profile photo</label>
-          <Input
+          <p className="text-sm font-medium">Profile photo</p>
+          <input
+            ref={fileInputRef}
+            id="member-avatar"
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            className="mt-1 h-10 bg-white"
+            className="sr-only"
             disabled={uploading}
-            onChange={(e) => onFile("avatar", e.target.files?.[0])}
+            onChange={(e) => onAvatar(e.target.files?.[0])}
           />
+          <Button
+            type="button"
+            variant="outline"
+            className="mt-1 h-10 px-4 font-semibold text-navy"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {uploading ? "Uploading…" : "Upload image"}
+          </Button>
+          {uploadMessage ? <p className="mt-1 text-sm text-emerald-700">{uploadMessage}</p> : null}
         </div>
       </div>
 
@@ -117,18 +129,6 @@ export function AccountForm({
           </p>
         ) : null}
       </form>
-
-      <div className="grid gap-1.5">
-        <label className="text-sm font-medium">Job photos or documents</label>
-        <Input
-          type="file"
-          accept="image/jpeg,image/png,image/webp,application/pdf"
-          className="h-10 bg-white"
-          disabled={uploading}
-          onChange={(e) => onFile("file", e.target.files?.[0])}
-        />
-        {uploadMessage ? <p className="text-sm text-emerald-700">{uploadMessage}</p> : null}
-      </div>
     </div>
   );
 }

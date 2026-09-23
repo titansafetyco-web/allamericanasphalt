@@ -14,11 +14,13 @@ export function FilterTable<T extends { id: string }>({
   columns,
   placeholder,
   searchText,
+  empty = "No matching records.",
 }: {
   rows: T[];
   columns: Column<T>[];
   placeholder: string;
   searchText: (row: T) => string;
+  empty?: string;
 }) {
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
@@ -53,7 +55,7 @@ export function FilterTable<T extends { id: string }>({
             {filtered.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-10 text-center text-muted-foreground">
-                  No matching records.
+                  {empty}
                 </td>
               </tr>
             ) : (

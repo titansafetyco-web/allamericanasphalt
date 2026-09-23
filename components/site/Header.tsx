@@ -56,10 +56,21 @@ export async function Header({ memberName, locale }: { memberName?: string | nul
               {signedIn ? (
                 <>
                   <a
-                    href="/account"
-                    className="max-w-40 truncate whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold text-white/85 transition-colors hover:bg-white hover:text-navy"
+                    href="/crm"
+                    aria-label={`${t.dashboard}: ${memberName}`}
+                    className="group relative inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-bold text-navy transition-colors duration-200 ease-out hover:bg-red-flag hover:text-white"
                   >
-                    {memberName}
+                    <span className="relative grid place-items-center">
+                      <span className="invisible col-start-1 row-start-1 whitespace-nowrap" aria-hidden>
+                        {(memberName?.length ?? 0) > t.dashboard.length ? memberName : t.dashboard}
+                      </span>
+                      <span className="pointer-events-none col-start-1 row-start-1 whitespace-nowrap transition-opacity duration-200 ease-out group-hover:opacity-0">
+                        {t.dashboard}
+                      </span>
+                      <span className="pointer-events-none col-start-1 row-start-1 whitespace-nowrap opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100">
+                        {memberName}
+                      </span>
+                    </span>
                   </a>
                   <form action={signOut} className="shrink-0">
                     <button

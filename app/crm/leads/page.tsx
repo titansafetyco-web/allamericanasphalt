@@ -1,14 +1,17 @@
-"use client";
-
 import { FilterTable } from "@/components/crm/FilterTable";
 import { StatusBadge } from "@/components/crm/StatusBadge";
-import { formatDate, leads, money } from "@/lib/crm/data";
+import { formatDate, money } from "@/lib/crm/data";
+import { listLeads } from "@/lib/crm/pipeline";
 
-export default function LeadsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function LeadsPage() {
+  const leads = await listLeads();
+
   return (
     <div className="mx-auto grid max-w-7xl gap-4">
       <p className="text-sm text-muted-foreground">
-        Incoming estimate requests and follow-ups. Sample data until the website form writes into this pipeline.
+        Incoming requests and follow-ups. Approved quotes move into Won on this pipeline.
       </p>
       <FilterTable
         rows={leads}
